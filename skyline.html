@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<!-- <meta http-equiv="Cache-control" content="no-cache, no-store">
+	<meta http-Equiv="Pragma" Content="no-cache">
+	<meta http-Equiv="Expires" Content="-1"> -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Gene Skyline</title>
+	
+	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script type='text/javascript' src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"> </script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script> -->
+	<script type="text/javascript" src="http://d3js.org/d3.v4.min.js"></script>
+	<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+	<script src="resources/dynatree/jquery/jquery.cookie.js" type="text/javascript"></script>
+	<script src="resources/dynatree/src/jquery.dynatree.js" type="text/javascript"></script>
+	<!-- <script src="resources/typeahead.js/bloodhound.js" type="text/javascript"></script> -->
+	<script src="resources/typeahead.js/typeahead.bundle.js" type="text/javascript"></script>
+	<!-- <script src="resources/typeahead.js/typeahead.jquery.js" type="text/javascript"></script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">	
+	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous"> -->
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/ui-lightness/jquery-ui.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
+	<link href="resources/dynatree/src/skin-vista/ui.dynatree.css" rel="stylesheet" type="text/css" id="skinSheet">
+	<link rel="stylesheet" type="text/css" href="skyline.css">
+			
+</head>
+
+<body>
+	<div class="masterhead"> </div>
+	<hr>
+	<div id="tooltip" class="hidden">
+		<p><strong>Population: </strong><span id="population"></span></p>
+        	<p><strong>Expression Value: </strong><span id="expr_value" style="color:red;font-weight:bold;"></span></p>
+        	<p><strong>Long Name: </strong><span id="long_name"></span></p>
+        	<p><strong>Description: </strong><span id="desc"></span></p>
+        	<p><strong>Author: </strong><span id="author"></span></p>
+        	<p><strong>Number of Samples: </strong><span id="number_of_sample"></span></p>
+        	<!--<p><strong>Sorting Info: </strong><span id="sorting_info"></span></p>-->
+        </div>
+        <div id="tooltip_y_axis" class="hidden">
+		<p><strong>Population: </strong><span id="population_y_axis"></span></p>
+        	<p><strong>Long Name: </strong><span id="long_name_y_axis"></span></p>
+        	<p><strong>Description: </strong><span id="desc_y_axis"></span></p>
+        	<p><strong>Author: </strong><span id="author_y_axis"></span></p>
+        	<p><strong>Number of Samples: </strong><span id="number_of_sample_y_axis"></span></p>
+        </div>
+        <!-- <div id="tooltip_max" class="hidden">
+        	<p><strong>Population: </strong><span id="population_max"></span></p>
+        	<p><strong>Global Expression Value: </strong><span id="expr_value_max" style="color:red;font-weight:bold;"></span></p>
+        	<p><strong>Long Name: </strong><span id="long_name_max"></span></p>
+        	<p><strong>Description: </strong><span id="desc_max"></span></p>
+        	<p><strong>Author: </strong><span id="author_max"></span></p>
+        	<p><strong>Number of Samples: </strong><span id="number_of_sample_max"></span></p>
+        </div> -->
+        <div id="AlertModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Alert</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p>Sorry! The sorting information is NOT available.</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+        
+	<div id="AlertModal_genesymbol" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Alert</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p>Sorry! The Gene Symbol can NOT be found!</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+        
+	<div class="container-fluid" style="width:90%;">
+      
+		<div class="row">
+			
+			<div class="col-xs-12 col-lg-4">
+				
+				<!-- <ul class="nav nav-pills">
+  					<li class="active"><a id="rnaseq_pill" data-toggle="pill" href="#rnaseq_tab">RNASeq</a></li>
+  					<li><a id="microarray_pill" data-toggle="pill" href="#microarray_tab">Microarray</a></li>
+  				</ul>
+  				
+  				<div class="tab-content">
+    			 	
+  				<div id="microarray_tab" class="tab-pane fade">
+  				
+  				<hr>
+  				<div class="form-group">
+    			 		<label>Data Group:</label>
+    			 		<select id="microarray_datagroup_list" class="selectpicker show-tick" title="Select One ..." data-width="85%">
+                        		<option>Key Populations</option>
+					<option>Stem and Progenitor Cells</option>
+					<option>Dendritic Cells</option>
+					<option>MFs, Monocytes, Neutrophils</option>
+					<option>B Cells</option>
+					<option>Innate Lymphocytes</option>
+					<option>gdT Cells</option>
+					<option>abT Cells</option>
+					<option>Activated T Cells</option>
+					<option>Stromal Cells</option>
+					<option>Mast and Basophils</option>
+					<option>IFN</option>
+                        		</select>
+                        	</div>	
+                        	
+                        	<div class="form-group">	
+  					<label>ProbeSet ID or Gene Symbol: </label>
+  					<div id="microarray_GeneList">
+  					<input type="text" class="typeahead" id="microarray_Gene" placeholder="Search ..." >
+  					</div>
+  					<div>
+  					<p></p>
+  					<p>ProbeSet ID; Gene Symbol; Description</p>
+  					</div>
+  				</div>	
+                        		
+                        	<div class="form-group">
+                        		<label>Max Scaling of Graph:</label>	
+                        		<select id="microarray_scaling_list" class="selectpicker show-tick" data-width="85%">
+                        		<option>Local</option>
+                        		<option>Local (log10)</option>
+					<option>Global</option>
+					<option>Global (log10)</option>
+                        		</select>
+                        	</div>
+                        	
+                        	<div class="form-group">
+  					<button type="button" class="btn btn-default" id="microarray_submit" value="">Submit</button>
+    				</div>
+                        	
+    				<hr>
+                        	
+    				<div style="height: 450px; overflow: auto;">    				
+    				<table class="table table-hover table-striped table-bordered" id="microarray_meta_info" style="display:none">
+				  <tbody>
+				    <tr>
+				      <th scope="row" class="info" width="30%">Gene Symbol</th>
+				      <td id="microarray_gene_symbol"></td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">Gene Full Name</th>
+				      <td id="microarray_gene_name"></td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">Synonyms</th>
+				      <td id="microarray_synonyms"></td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">Summary<br/>(from the human ortholog)</th>
+				      <td>
+				      	<div id="microarray_summary" style="height: 80px; overflow:auto;"></div>
+				      </td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">Feature Type</th>
+				      <td id="microarray_type"></td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">Genome Position</th>
+				      <td id="microarray_seq_map"></td>
+				    </tr> -->
+				    <!-- <tr>
+				      <th scope="row" class="info">Genetic Map</th>
+				      <td id="microarray_genetic_map"></td>
+				    </tr> -->
+				    <!-- <tr>
+				      <th scope="row" class="info">NCBI</th>
+				      <td id="microarray_ncbi_id"></td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">Ensembl</th>
+				      <td id="microarray_ensembl_id"></td>
+				    </tr> -->
+				    <!-- <tr>
+				      <th scope="row" class="info">MGI</th>
+				      <td id="microarray_MGI_id"></td>
+				    </tr> -->
+				    <!-- <tr>
+				      <th scope="row" class="info">Human Orthology</th>
+				      <td id="microarray_human_orthology"></td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">Wikipedia</th>
+				      <td id="microarray_wikipedia_id"></td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">Gene Ontology</th>
+				      <td>
+				      	<div id="microarray_GO" style="height: 85px; overflow:auto;"></div>
+				      	<div id="microarray_GO_showAll" style="border: 1px solid lightgray; height: 2em; line-height: 2em;"></div>
+				      </td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">KEGG Pathway</th>
+				      <td>
+				      	<div id="microarray_kegg" style="height: 85px; overflow:auto;"></div>
+				      </td>
+				    </tr>
+				  </tbody>
+				</table>
+  				
+    				</div>
+    				
+    				<div id="microarray_summary_note" style="display:none"><p><font size="2">* Summary is not available for the mouse gene. This summary is from the human ortholog.</font></p></div>
+				<div id="microarray_go_note" style="display:none"><p><font size="2">** Only the GO term validated by experimental evidence is shown. <b>P</b>: Biological Process; <b>F</b>: Molecular Function; <b>C</b>: Cellular Component.</font></p></div>
+				
+    				</div>
+    				
+    				<div id="rnaseq_tab" class="tab-pane fade in active">
+  				
+    				<hr> -->
+    				
+    				<form class="form-horizontal">
+  				<div class="form-group">
+    			 		<label class="control-label col-xs-3" for="rnaseq_datagroup_list">Data Group:</label>
+    			 		<!-- <select id="rnaseq_datagroup_list" class="selectpicker show-tick" title="Select One ..." data-width="85%"> -->
+    			 		<div class="col-xs-9" id="rnaseq_datagroup_list_menu">
+    			 		<select id="rnaseq_datagroup_list" class="selectpicker show-tick" data-width="100%">
+                        		<option>ImmGen ULI RNASeq</option>
+    			 		<!-- <option>Male/Female RNASeq</option> -->
+                        		</select>
+                        		</div>
+                        	</div>	
+                        	
+                        	<!-- <div id="rnaseq_population_option_group" class="form-group" style="display: none"> -->
+                        	<div id="rnaseq_population_option_group" class="form-group">
+    			 		<label class="control-label col-xs-3" for="rnaseq_population_list">Populations:</label>
+    			 		<div class="col-xs-9">
+    			 			<select id="rnaseq_population_list" class="selectpicker show-tick" data-width="100%">
+    			 				<option>Key populations</option>
+    			 				<option>Select the populations of interest</option>
+    			 			</select>
+    			 			<div id="rnaseq_population_tree" style="display: none"></div>
+                        		</div>
+                        	</div>
+                        	
+                        	<!-- <div class="row">
+  					<div class="col-xs-3"></div>
+  					<div id="rnaseq_population_tree" class="col-xs-9" style="width:85%; display: none"></div>
+                        	</div> -->
+                        	
+                        	<div class="form-group">
+                        		<label class="control-label col-xs-3" for="rnaseq_Gene">Gene Symbol: </label>
+                        		<div id="rnaseq_GeneList" class="col-xs-9">
+                        			<input type="text" class="typeahead" id="rnaseq_Gene" placeholder="Search Gene ...">
+                        		</div>
+                        		
+  					<div class="col-xs-3"></div>
+  					<div class="col-xs-9">
+  						<label class="radio-inline"><input type="radio" name="rnaseq_optradio" id="rnaseq_beginwith" checked="checked" onclick = "refresh_rnaseq_genelist()">Begins with</label>
+  						<label class="radio-inline"><input type="radio" name="rnaseq_optradio" id="rnaseq_contain" onclick = "refresh_rnaseq_genelist()">Contains</label>
+  					</div>
+  				</div>	
+                        	
+                        	<!-- <hr> -->
+                        		
+                        	<div class="form-group">
+                        		<label class="control-label col-xs-3" for="rnaseq_scaling_list">Scaling:</label>	
+                        		<div class="col-xs-9">
+                        		<select id="rnaseq_scaling_list" class="selectpicker show-tick" data-width="100%">
+                        		<option>Local</option>
+                        		<option>Local (log10)</option>
+					<option>Global</option>
+					<option>Global (log10)</option>
+                        		</select>
+                        		</div>
+                        	</div>
+                        	
+    				
+                        	<!-- <hr> -->
+                        	
+                        	<div class="form-group text-center">
+  					<button type="button" class="btn btn-primary" id="rnaseq_submit" value="">Submit</button>
+    				</div>
+    				
+    				</form>
+                        	<hr>
+                        	<div class="metainfo" id="rnaseq_metainfo_table">
+  				<table class="table table-hover table-striped table-bordered" id="rnaseq_meta_info" style="display:none">
+				  
+				  <tbody>
+				    <tr>
+				      <th scope="row" class="info" width="30%">Gene Symbol</th>
+				      <td id="rnaseq_gene_symbol"></td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">Gene Full Name</th>
+				      <td id="rnaseq_gene_name"></td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">Synonyms</th>
+				      <td id="rnaseq_synonyms"></td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info" title="Summary is not available for the mouse gene. This summary is from the human ortholog.">Summary<br/>(from the human ortholog)</th>
+				      <td>
+				      	<div id="rnaseq_summary" style="height: 85px; overflow:auto;"></div>
+				      </td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">Feature Type</th>
+				      <td id="rnaseq_type"></td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">Genome Position</th>
+				      <td id="rnaseq_seq_map"></td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">LinkOut</th>
+				      <td id="rnaseq_linkout"></td>
+				    </tr>
+				    <!-- <tr>
+				      <th scope="row" class="info">Genetic Map</th>
+				      <td id="rnaseq_genetic_map"></td>
+				    </tr> -->
+				    <!-- <tr>
+				      <th scope="row" class="info">NCBI</th>
+				      <td id="rnaseq_ncbi_id"></td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">Ensembl</th>
+				      <td id="rnaseq_ensembl_id"></td>
+				    </tr> -->
+				    <!-- <tr>
+				      <th scope="row" class="info">MGI</th>
+				      <td id="rnaseq_MGI_id"></td>
+				    </tr> -->
+				    <tr>
+				      <th scope="row" class="info">Human Ortholog</th>
+				      <td id="rnaseq_human_orthology"></td>
+				    </tr>
+				    <!-- <tr>
+				      <th scope="row" class="info">Wikipedia</th>
+				      <td id="rnaseq_wikipedia_id"></td>
+				    </tr> -->
+				    <tr>
+				      <th scope="row" class="info" title="Only the GO term validated by experimental evidence is shown">Gene Ontology</th>
+				      <td>
+				      	<div id="rnaseq_GO" style="height: 90px; overflow:auto;"></div>
+				      	<div id="rnaseq_GO_showAll" style="border: 1px solid lightgray; height: 2em; line-height: 2em;"></div>
+				      </td>
+				    </tr>
+				    <tr>
+				      <th scope="row" class="info">KEGG Pathway</th>
+				      <td>
+				      	<div id="rnaseq_kegg" style="height: 90px; overflow:auto;"></div>
+				      </td>
+				    </tr>
+				  </tbody>
+				</table>
+    				</div>
+    				
+				<!-- <div id="rnaseq_summary_note" style="display:none"><p><font size="2">* Summary is not available for the mouse gene. This summary is from the human ortholog.</font></p></div>
+				<div id="rnaseq_go_note" style="display:none"><p><font size="2">** Only the GO term validated by experimental evidence is shown. <b>P</b>: Biological Process; <b>F</b>: Molecular Function; <b>C</b>: Cellular Component.</font></p></div>
+				
+    				</div>
+    				
+    				</div> -->
+  			</div>
+
+			<div class="col-xs-12 col-lg-8" id="chart"></div>
+			<div id="microarray_save_option" class="form-group" align="right" style="display:none">
+  					<button type="button" class="btn btn-default" id="microarray_save_expr" value="">Save data as CSV</button>
+  					<button type="button" class="btn btn-default" id="microarray_save_as_svg" value="">Save as SVG</button>
+    					<button type="button" class="btn btn-default" id="microarray_save_as_pdf" value="">Save as PDF</button>
+    					<button type="button" class="btn btn-default" id="microarray_print" value="">Print</button>
+    			</div> 
+  			<div id="rnaseq_save_option" class="form-group" align="right" style="display:none">
+  					<button type="button" class="btn btn-primary" id="rnaseq_save_expr" value="">Save data as CSV</button>
+  					<button type="button" class="btn btn-primary" id="rnaseq_save_as_svg" value="">Save as SVG</button>
+    					<button type="button" class="btn btn-primary" id="rnaseq_save_as_pdf" value="">Save as PDF</button>
+    					<button type="button" class="btn btn-primary" id="rnaseq_print" value="">Print</button>
+    			</div>        
+			
+		</div>
+
+
+	</div>
+	<hr>
+        <!-- Hidden <FORM> to submit the SVG data to the server, which will convert it to SVG/PDF/PNG downloadable file.
+        The form is populated and submitted by the JavaScript below. -->
+        <form id="svgform" method="post" action="../MyGeneSet/cgi-bin/download_Skyline.cgi">
+        <input type="hidden" id="output_format" name="output_format" value="">
+        <input type="hidden" id="data" name="data" value="">
+        <input type="hidden" name="rnaseq_group" id="rnaseq_group"></input><br>
+        </form>
+        
+        
+	<script type="text/javascript">
+	
+		var margin = {top: 60, right: 50, bottom: 10, left: 190};
+		var width = document.getElementById("chart").offsetWidth - margin.left - margin.right;
+		var height = window.innerHeight - margin.top - margin.bottom - 195;
+		document.getElementById("rnaseq_metainfo_table").style.height = (height - 200).toString() + "px";
+		document.getElementById("rnaseq_Gene").style.width = ($("#rnaseq_datagroup_list_menu").width()-2).toString() + 'px';
+		$( window ).resize(function() {
+			document.getElementById("rnaseq_Gene").style.width = ($("#rnaseq_datagroup_list_menu").width()-2).toString() + 'px';
+  		});
+		
+		
+		var chart = d3.select("#chart").append("svg")
+					.attr("width", width + margin.left + margin.right)
+    					.attr("height", height + margin.top + margin.bottom);
+    		var dataset;    		
+    		
+    		var description1, description2;
+    		
+      		////////////////////////////////////////////////////////////////
+      		
+      		var jsonText = $.ajax({                                         
+ 			datatype: 'json',      
+ 			url: 'resources/MoGene_1_0_st_v1_na36_mm10_transcript_ProbeSetID_GeneSymbol.json',               
+			async: false
+		}).responseText;
+		var temp = JSON.parse(jsonText);
+		
+		var gene_info = [];
+		var hashtable = new Object();
+		var hashtable_gene = new Object();
+		//var hashtable_ncbi_id = new Object();
+		
+		for(var k in temp) { 
+			var keyname = temp[k]['id'] + "; " + temp[k]['name'] + "; " + temp[k]['desc'];
+			gene_info.push(keyname);
+			hashtable[keyname] = temp[k]['id'];
+			hashtable_gene[keyname] = temp[k]['name'];
+			//hashtable_ncbi_id[keyname] = temp[k]['ncbi_id'];
+		}
+				
+		
+		var genes = new Bloodhound({
+			datumTokenizer: Bloodhound.tokenizers.whitespace,
+			queryTokenizer: Bloodhound.tokenizers.whitespace,
+			local: gene_info
+		})
+
+		$('#microarray_GeneList .typeahead').typeahead({
+		  hint: true,
+		  highlight: true,
+		  minLength: 1
+		},
+		{
+		  name: 'genes',
+		  limit: 10,
+		  source: genes
+		});
+		
+		var jsonText_gencode_GRCm38 = $.ajax({                                         
+ 			datatype: 'json',      
+ 			url: 'resources/gencode_GRCm38_genes_no_rRNA.json',               
+			async: false
+		}).responseText;
+		var temp_gencode_GRCm38 = JSON.parse(jsonText_gencode_GRCm38);
+		
+		var gene_info_gencode_GRCm38 = [];
+		//var hashtable_ucsc_mm10 = new Object();
+		//var hashtable_gene_ucsc_mm10 = new Object();
+		
+		for(var v in temp_gencode_GRCm38) { 
+			var keyname_gencode_GRCm38 = temp_gencode_GRCm38[v]['name'];
+			gene_info_gencode_GRCm38.push(keyname_gencode_GRCm38);
+			//hashtable[keyname] = temp[v]['id'];
+			//hashtable_gene[keyname] = temp[v]['name'];
+		}
+				
+		var genes_gencode_GRCm38 = new Bloodhound({
+			datumTokenizer: Bloodhound.tokenizers.whitespace,
+			queryTokenizer: Bloodhound.tokenizers.whitespace,
+			local: gene_info_gencode_GRCm38
+		});
+		
+		$('#rnaseq_GeneList .typeahead').typeahead({
+		  hint: true,
+		  highlight: true,
+		  minLength: 1
+		},
+		{
+		  name: 'genes',
+		  limit: 100,
+		  source: genes_gencode_GRCm38
+		});
+      		
+		////////////////////////////////////////////////////////////////
+		var treeData = [
+		    {title: "Check all", isFolder: true, key: "check all", icon: false,
+		     children: [
+		
+			 {title: "ab T Cells", isFolder: true, key: "ab T Cells", icon: false,
+			  children: [
+			      {title:"preT_DN1_Th", key: "preT_DN1_Th", icon: false, tooltip: "Population Name: preT_DN1_Th\nGroup Name: ab T cells\nLong Name: Thymic preT DN1\nDescription: 6 week old C57BL/6J mice sorted on  Lin-(CD4,CD8,CD11b,CD11c,CD19,TCRb,TCRgd,NK1.1,Gr1,Ter119)CD44hiCD117hiCD25-/lo\nOwner: Hide Yoshida"},
+			      {title:"preT_DN2a_Th", key: "preT_DN2a_Th", icon: false, tooltip: "Population Name: preT_DN2a_Th\nGroup Name: ab T cells\nLong Name: Thymic preT DN2a\nDescription: 6 week old C57BL/6J mice sorted on  Lin-(CD4,CD8,CD11b,CD11c,CD19,TCRb,TCRgd,NK1.1,Gr1,Ter119)CD44hiCD117hiCD25hi\nOwner: Hide Yoshida"},
+			      {title:"preT_DN2b_Th", key: "preT_DN2b_Th", icon: false, tooltip: "Population Name: preT_DN2b_Th\nGroup Name: ab T cells\nLong Name: Thymic preT DN2b\nDescription: 6 week old C57BL/6J mice sorted on  Lin-(CD4,CD8,CD11b,CD11c,CD19,TCRb,TCRgd,NK1.1,Gr1,Ter119)CD44hiCD117intCD25hi\nOwner: Hide Yoshida"},
+			      {title:"preT_DN3_Th", key: "preT_DN3_Th", icon: false, tooltip: "Population Name: preT_DN3_Th\nGroup Name: ab T cells\nLong Name: Thymic preT DN3\nDescription: 6 week old C57BL/6J mice sorted on  Lin-(CD4,CD8,CD11b,CD11c,CD19,TCRb,TCRgd,NK1.1,Gr1,Ter119)CD44-CD25hi\nOwner: Hide Yoshida"},
+			      {title:"T_DN4_Th", key: "T_DN4_Th", icon: false, tooltip: "Population Name: T_DN4_Th\nGroup Name: ab T cells\nLong Name: Thymic preT DN4\nDescription: 6 week old C57BL/6J mice sorted on  Lin-(CD4,CD8,CD11b,CD11c,CD19,TCRb,TCRgd,NK1.1,Gr1,Ter119)CD44-CD25-CD28+\nOwner: Hide Yoshida"},
+			      {title:"T_ISP_Th", key: "T_ISP_Th", icon: false, tooltip: "Population Name: T_ISP_Th\nGroup Name: ab T cells\nLong Name: Intermediate Single-Positive Thymocytes\nDescription: 6 week old C57BL/6J mice sorted on CD4-CD8+TCR-/loCD24hi\nOwner: Hide Yoshida"},
+			      {title:"T_DP_Th", key: "T_DP_Th", icon: false, tooltip: "Population Name: T_DP_Th\nGroup Name: ab T cells\nLong Name: Double Positive Thymocytes\nDescription: 6 week old C57BL/6J mice sorted on SSCsmallCD4+CD8+TCRbloCD69-Dump-\nOwner: Hide Yoshida"},
+			      {title:"T_4_Th", key: "T_4_Th", icon: false, tooltip: "Population Name: T_4_Th\nGroup Name: ab T cells\nLong Name: CD4+ Thymocytes\nDescription: 6 week old C57BL/6J mice sorted on CD4+CD8-TCRbhiCD24int-Dump-\nOwner: Hide Yoshida"},
+			      {title:"T_4_Nve_Fem_Sp", key: "T_4_Nve_Fem_Sp", icon: false, tooltip: "Population Name: T_4_Nve_Fem_Sp\nGroup Name: ab T cells\nLong Name: Female Splenic Naïve CD4+ T cells\nDescription: 6 week old C57BL/6J mice sorted on CD4+CD8-TCRbhiCD62LhiCD44loCD25-Dump-\nOwner: Andrew Rhoads"},
+			      {title:"T_4_Nve_Sp", key: "T_4_Nve_Sp", icon: false, tooltip: "Population Name: T_4_Nve_Sp\nGroup Name: ab T cells\nLong Name: Splenic Naïve CD4+ T cells\nDescription: 6 week old C57BL/6J mice sorted on CD4+CD8-TCRbhiCD62LhiCD44loCD25-Dump-\nOwner: Andrew Rhoads"},
+			      {title:"T_4_Sp_aCD3+CD40_18hr", key: "T_4_Sp_aCD3+CD40_18hr", icon: false, tooltip: "Population Name: T_4_Sp_aCD3+CD40_18hr\nGroup Name: ab T cells\nLong Name: Splenic Activated CD4+ Tcells, aCD3+CD40 18 hr\nDescription: 6 week old C57BL/6J mice sorted on CD4+CD8-TCRbhi-Dump-\nOwner: Hide Yoshida"},
+			      {title:"T_8_Th", key: "T_8_Th", icon: false, tooltip: "Population Name: T_8_Th\nGroup Name: ab T cells\nLong Name: CD8+ Thymocytes\nDescription: 6 week old C57BL/6J mice sorted on CD4-CD8+TCRbhiCD24int-Dump-\nOwner: Hide Yoshida"},
+			      {title:"T_8_Nve_Sp", key: "T_8_Nve_Sp", icon: false, tooltip: "Population Name: T_8_Nve_Sp\nGroup Name: ab T cells\nLong Name: Splenic Naïve CD8+ T cells\nDescription: 6 week old C57BL/6J mice sorted on CD4-CD8+TCRbhiCD62LhiCD44loDump-\nOwner: Hide Yoshida"},
+			      {title:"T8_TN_P14_Sp", key: "T8_TN_P14_Sp", icon: false, tooltip: "Population Name: T8_TN_P14_Sp\nGroup Name: ab T cells\nLong Name: Splenic Triple Negative CD8+ P14 T cells\nDescription: 6 week old C57BL/6J mice sorted on CD8+CD44-CD4-MHCII-B220-Gr1-Ter119-\nOwner: Bingfei Yu"},
+			      {title:"T8_MP_LCMV_d7_Sp", key: "T8_MP_LCMV_d7_Sp", icon: false, tooltip: "Population Name: T8_MP_LCMV_d7_Sp\nGroup Name: ab T cells\nLong Name: Splenic CD8+ Memory Precursor, LCMV d7\nDescription: 7 week old C57BL/6J mice sorted on CD8+KLRG1-CD127+CD45.1+CD4-MHCII-B220-Gr1-Ter119-\nOwner: Bingfei Yu"},
+			      {title:"T8_TE_LCMV_d7_Sp", key: "T8_TE_LCMV_d7_Sp", icon: false, tooltip: "Population Name: T8_TE_LCMV_d7_Sp\nGroup Name: ab T cells\nLong Name: Splenic CD8+ Terminal Effector, LCMV d7\nDescription: 7 week old C57BL/6J mice sorted on CD4-CD8+TCRbhiCD62LhiCD44loDump-\nOwner: Bingfei Yu"},
+			      {title:"T8_Tcm_LCMV_d180_Sp", key: "T8_Tcm_LCMV_d180_Sp", icon: false, tooltip: "Population Name: T8_Tcm_LCMV_d180_Sp\nGroup Name: ab T cells\nLong Name: Splenic CD8+ Central Memory, LCMV d180\nDescription: 32 week old C57BL/6J mice sorted on CD8+CD44+CD62L+CD45.1+CD4-MHCII-B220-Gr1-Ter119-\nOwner: Bingfei Yu"},
+			      {title:"T8_Tem_LCMV_d180_Sp", key: "T8_Tem_LCMV_d180_Sp", icon: false, tooltip: "Population Name: T8_Tem_LCMV_d180_Sp\nGroup Name: ab T cells\nLong Name: Splenic CD8+ Effector Memory, LCMV d180\nDescription: 32 week old C57BL/6J mice sorted on CD8+KLRG1+CD127-CD45.1+CD4-MHCII-B220-Gr1-Ter119-\nOwner: Bingfei Yu"},
+			      {title:"T8_IEL_LCMV_d7_Gut", key: "T8_IEL_LCMV_d7_Gut", icon: false, tooltip: "Population Name: T8_IEL_LCMV_d7_Gut\nGroup Name: ab T cells\nLong Name: Gut IEL CD8+ , LCMV d7\nDescription: 7 week old C57BL/6J mice sorted on CD8+CD45.1+CD4-MHCII-B220-Gr1-\nOwner: Bingfei Yu"},
+			      {title:"Treg_4_25hi_Sp", key: "Treg_4_25hi_Sp", icon: false, tooltip: "Population Name: Treg_4_25hi_Sp\nGroup Name: ab T cells\nLong Name: Splenic CD25hi Tregs\nDescription: 6 week old C57BL/6J mice sorted on CD4+CD8-TCRbhiCD62LhiCD44loCD25hiDump-\nOwner: Hide Yoshida"},
+			      {title:"Treg_4_FP3+_Nrplo_Co", key: "Treg_4_FP3+_Nrplo_Co", icon: false, tooltip: "Population Name: Treg_4_FP3+_Nrplo_Co\nGroup Name: ab T cells\nLong Name: Colonic FoxP3+ Nrplo Tregs\nDescription: 6 week old C57BL/6J mice sorted on Foxp3+CD4+TCRb+NrploDump\nOwner: Hide Yoshida"},
+			      {title:"NKT_Sp", key: "NKT_Sp", icon: false, tooltip: "Population Name: NKT_Sp\nGroup Name: ab T cells\nLong Name: Splenic Natural Killer T cells\nDescription: 6 week old C57BL/6J mice sorted on [CD19-Gr1-Ter119-TCRgd-]TCRbMedCD1dTetramer(alphaGalCer)+\nOwner: Edy Kim"},
+			      {title:"NKT_Sp_LPS_3hr", key: "NKT_Sp_LPS_3hr", icon: false, tooltip: "Population Name: NKT_Sp_LPS_3hr\nGroup Name: ab T cells\nLong Name: Splenic Natural Killer T cells, LPS 3hr\nDescription: 8 week old C57BL/6J mice sorted on [CD19-Gr1-Ter119-TCRgd-]TCRbMedCD1dTetramer(alphaGalCer)+\nOwner: Edy Kim"},
+			      {title:"NKT_Sp_LPS_18hr", key: "NKT_Sp_LPS_18hr", icon: false, tooltip: "Population Name: NKT_Sp_LPS_18hr\nGroup Name: ab T cells\nLong Name: Splenic Natural Killer T cells, LPS 18hr\nDescription: 8 week old C57BL/6J mice sorted on [CD19-Gr1-Ter119-TCRgd-]TCRbMedCD1dTetramer(alphaGalCer)+\nOwner: Edy Kim"},
+			      {title:"NKT_Sp_LPS_3d", key: "NKT_Sp_LPS_3d", icon: false, tooltip: "Population Name: NKT_Sp_LPS_3d\nGroup Name: ab T cells\nLong Name: Splenic Natural Killer T cells, LPS  3d\nDescription: 6 week old C57BL/6J mice sorted on [CD19-Gr1-Ter119-TCRgd-]TCRbMedCD1dTetramer(alphaGalCer)+\nOwner: Edy Kim"}
+		
+			  ]
+			 },
+			 
+			 {title: "B Cells", isFolder: true, key: "B Cells", icon: false,
+			  children: [
+			      {title:"proB_CLP_BM", key: "proB_CLP_BM", icon: false, tooltip: "Population Name: proB_CLP_BM\nGroup Name: B cells\nLong Name: Bone Marrow Common Lymphoid Progenitor\nDescription: 6 week old C57BL/6J mice sorted on LIN-CD93+CD117+IL7Ra+CD45R-\nOwner: Susan Shinton"},
+			      {title:"proB_FrA_BM", key: "proB_FrA_BM", icon: false, tooltip: "Population Name: proB_FrA_BM\nGroup Name: B cells\nLong Name: Bone Marrow Fr. A (Pre-Pro-B)\nDescription: 6 week old C57BL/6J mice sorted on LIN-CD93+CD117+IL7Ra+CD45R+\nOwner: Susan Shinton"},
+			      {title:"proB_FrBC_BM", key: "proB_FrBC_BM", icon: false, tooltip: "Population Name: proB_FrBC_BM\nGroup Name: B cells\nLong Name: Bone Marrow Fr. BC (Pro-B)\nDescription: 6 week old C57BL/6J mice sorted on CD93+IgM-CD19+CD43+HSA+\nOwner: Susan Shinton"},
+			      //{title:"preB_FrD_BM", key: "preB_FrD_BM", icon: false, tooltip: "Population Name: preB_FrD_BM\nGroup Name: B cells\nLong Name: Bone Marrow Fr. D (small pre-B)\nDescription: 6 week old, C57BL/6J mice sorted on CD93+IgM-CD19+CD43-HSA+\nOwner: Susan Shinton"},
+			      {title:"B_FrE_BM", key: "B_FrE_BM", icon: false, tooltip: "Population Name: B_FrE_BM\nGroup Name: B cells\nLong Name: Bone Marrow Fr. E (newly formed B)\nDescription: 6 week old C57BL/6J mice sorted on CD93+IgM+CD19+CD43-HSA+\nOwner: Susan Shinton"},
+			      {title:"B1b_PC", key: "B1b_PC", icon: false, tooltip: "Population Name: B1b_PC\nGroup Name: B cells\nLong Name: Peritoneal B1b\nDescription: 6 week old C57BL/6J mice sorted on CD19+CD45R+IgM++CD93-CD23-CD43+CD5-\nOwner: Susan Shinton"},
+			      {title:"B_Sp", key: "B_Sp", icon: false, tooltip: "Population Name: B_Sp\nGroup Name: B cells\nLong Name: Splenic  B cells\nDescription: 6 week old C57BL/6J mice sorted on CD19+Igm+TCRb-\nOwner: Andrew Rhoads"},
+			      {title:"B_Fem_Sp", key: "B_Fem_Sp", icon: false, tooltip: "Population Name: B_Fem_Sp\nGroup Name: B cells\nLong Name: Female Splenic  B cells\nDescription: 6 week old C57BL/6J mice sorted on CD19+Igm+TCRb-\nOwner: Andrew Rhoads"},
+			      {title:"B_T1_Sp", key: "B_T1_Sp", icon: false, tooltip: "Population Name: B_T1_Sp\nGroup Name: B cells\nLong Name: Splenic T1 \nDescription: 6 week old C57BL/6J mice sorted on CD19+CD45R+IgM++CD93+CD23-\nOwner: Susan Shinton"},
+			      {title:"B_T2_Sp", key: "B_T2_Sp", icon: false, tooltip: "Population Name: B_T2_Sp\nGroup Name: B cells\nLong Name: Spleinc T2 \nDescription: 6 week old C57BL/6J mice sorted on CD19+CD45R+IgM++CD93+CD23+\nOwner: Susan Shinton"},
+			      {title:"B_T3_Sp", key: "B_T3_Sp", icon: false, tooltip: "Population Name: B_T3_Sp\nGroup Name: B cells\nLong Name: Splenic T3 \nDescription: 6 week old C57BL/6J mice sorted on CD19+CD45R+IgM+CD93+CD23+\nOwner: Susan Shinton"},
+			      {title:"B_Fo_Sp", key: "B_Fo_Sp", icon: false, tooltip: "Population Name: B_Fo_Sp\nGroup Name: B cells\nLong Name: Splenic Follicular \nDescription: 6 week old C57BL/6J mice sorted on CD19+CD45R+IgM+CD93-CD23+CD43-CD5-\nOwner: Susan Shinton"},
+			      {title:"B_MZ_Sp", key: "B_MZ_Sp", icon: false, tooltip: "Population Name: B_MZ_Sp\nGroup Name: B cells\nLong Name: Splenic Marginal Zone \nDescription: 6 week old C57BL/6J mice sorted on CD19+CD45R+IgM++CD93-CD23-CD21/35++\nOwner: Susan Shinton"},
+			      {title:"B_mem_Sp", key: "B_mem_Sp", icon: false, tooltip: "Population Name: B_mem_Sp\nGroup Name: B cells\nLong Name: Splenic Memory  \nDescription: 6 week old C57BL/6J mice sorted on CD19+B220+IgD-Fas-CD38+IgG+  \nOwner: Julie Tellier"},
+			      {title:"B_GC_CB_Sp", key: "B_GC_CB_Sp", icon: false, tooltip: "Population Name: B_GC_CB_Sp\nGroup Name: B cells\nLong Name: Splenic  Germinal Center Centroblasts\nDescription: 6 week old C57BL/6J mice sorted on CD19+B220+IgD-Fas+CD38-CXCR4hi CD86lo\nOwner: Julie Tellier"},
+			      {title:"B_GC_CC_Sp", key: "B_GC_CC_Sp", icon: false, tooltip: "Population Name: B_GC_CC_Sp\nGroup Name: B cells\nLong Name: Splenic Germinal Center Centrocytes\nDescription: 6 week old C57BL/6J mice sorted on CD19+B220+IgD-Fas+CD38-CXCR4lo CD86hi\nOwner: Julie Tellier"},
+			      {title:"B_PB_Sp", key: "B_PB_Sp", icon: false, tooltip: "Population Name: B_PB_Sp\nGroup Name: B cells\nLong Name: Splenic  Plasmablasts\nDescription: 6 week old C57BL/6J BLIMP1-GFP mice sorted on GFPlo CD138+ MHCIIhi (dump: NK1.1- TCRb- Gr1- CD11b-)\nOwner: Julie Tellier"},
+			      {title:"B_PC_BM", key: "B_PC_BM", icon: false, tooltip: "Population Name: B_PC_BM\nGroup Name: B cells\nLong Name: Bone Marrow Plasma cells\nDescription: 6 week old C57BL/6J BLIMP1-GFP mice sorted on GFPhi CD138+ MHCIIlo (dump: NK1.1- TCRb- Gr1- CD11b-)\nOwner: Julie Tellier"},
+			      {title:"B_PC_Sp", key: "B_PC_Sp", icon: false, tooltip: "Population Name: B_PC_Sp\nGroup Name: B cells\nLong Name: Splenic Plasma cells\nDescription: 6 week old C57BL/6J BLIMP1-GFP mice sorted on GFPhi CD138+ MHCIIlo (dump: NK1.1- TCRb- Gr1- CD11b-)\nOwner: Julie Tellier"}
+			      
+			  ]
+			 },
+			 
+			 {title: "Dendritic Cells", isFolder: true, key: "Dendritic Cells", icon: false,
+			  children: [			      
+			      {title:"DC_4+_Sp", key: "DC_4+_Sp", icon: false, tooltip: "Population Name: DC_4+_Sp\nGroup Name: Dendritic cells\nLong Name: Splenic CD4+\nDescription: 6 week old C57BL/6J mice sorted on CD45+ MHCII+ CD11c+ CD8- CD4+\nOwner: Barbara Maier & Stefan Jordan"},
+			      {title:"DC_8+_Sp", key: "DC_8+_Sp", icon: false, tooltip: "Population Name: DC_8+_Sp\nGroup Name: Dendritic cells\nLong Name: Spleenic CD8+ \nDescription: 6 week old C57BL/6J mice sorted on CD45+ MHCII+ CD11c+ CD8+ CD4-\nOwner: Barbara Maier & Stefan Jordan"},
+			      {title:"DC_pDC_Sp", key: "DC_pDC_Sp", icon: false, tooltip: "Population Name: DC_pDC_Sp\nGroup Name: Dendritic cells\nLong Name: Splenic Plasmacytoid\nDescription: 6 week old C57BL/6J mice sorted on CD45lo CD11b+\nOwner: Aleksandra Wroblewska"}
+			      //{title:"DC_103+11b-_SI", key: "DC_103+11b-_SI", icon: false, tooltip: "Population Name: DC_103+11b-_SI\nGroup Name: Dendritic cells\nLong Name: Small Intestine CD103+ CD11b-  \nDescription: 6 week old C57BL/6J mice sorted on CD45+ MHCII+ CD11c+/loCD64-CD103+CD11b-\nOwner: Aleksey Chudnovskiy & Arthur Mortha"},
+			      //{title:"DC_103+11b+_SI", key: "DC_103+11b+_SI", icon: false, tooltip: "Population Name: DC_103+11b+_SI\nGroup Name: Dendritic cells\nLong Name: Small Intestine CD103+ CD11b+ \nDescription: 6 week old C57BL/6J mice sorted on CD45+ MHCII+ CD11c+/loCD64+CD103-CD11b+\nOwner: Aleksey Chudnovskiy & Arthur Mortha"}
+			  ]
+			 },
+			 
+			 {title: "gd T Cells", isFolder: true, key: "gd T Cells", icon: false,
+			  children: [
+			      {title:"Tgd_g1_1+d1_24a+_Th", key: "Tgd_g1_1+d1_24a+_Th", icon: false, tooltip: "Population Name: Tgd_g1_1+d1_24a+_Th\nGroup Name: gd T cells\nLong Name: Vg1.1+  Scart2-  immature thymocytes\nDescription: 6 week old C57BL/6J mice sorted on TCRvg1.1+TCRd+CD24hiScart2-CD4-CD8-\nOwner: Yilin Qi"},
+			      {title:"Tgd_g2+d1_24a+_Th", key: "Tgd_g2+d1_24a+_Th", icon: false, tooltip: "Population Name: Tgd_g2+d1_24a+_Th\nGroup Name: gd T cells\nLong Name: Vg2+ Scart2-  immature thymocytes\nDescription: 6 week old C57BL/6J mice sorted on TCRvg2+TCRd+CD24hiScart2-CD4-CD8-\nOwner: Yilin Qi"},
+			      {title:"Tgd_g2+d17_24a+_Th", key: "Tgd_g2+d17_24a+_Th", icon: false, tooltip: "Population Name: Tgd_g2+d17_24a+_Th\nGroup Name: gd T cells\nLong Name: Vg2+ Scart2+ immature thymocytes\nDescription: 6 week old C57BL/6J mice sorted on TCRvg2+TCRd+CD24hiScart2+CD4-CD8-\nOwner: Yilin Qi"},
+			      {title:"Tgd_g1_1+d1_LN", key: "Tgd_g1_1+d1_LN", icon: false, tooltip: "Population Name: Tgd_g1_1+d1_LN\nGroup Name: gd T cells\nLong Name: Vg1.1+ CD27+.LN \nDescription: 6 week old C57BL/6J mice sorted on TCRvg1.1+TCRd+CD24-CD27+CD4-CD8-\nOwner: Yilin Qi"},
+			      {title:"Tgd_g2+d1_LN", key: "Tgd_g2+d1_LN", icon: false, tooltip: "Population Name: Tgd_g2+d1_LN\nGroup Name: gd T cells\nLong Name: Vg2+ CD27+.LN \nDescription: 6 week old C57BL/6J mice sorted on TCRvg2+TCRd+CD24-CD27+CD4-CD8-\nOwner: Yilin Qi"},
+			      {title:"Tgd_g2+d17_LN", key: "Tgd_g2+d17_LN", icon: false, tooltip: "Population Name: Tgd_g2+d17_LN\nGroup Name: gd T cells\nLong Name: Vg2+ CD27-.LN \nDescription: 6 week old C57BL/6J mice sorted on TCRvg2+TCRd+CD24-CD27-CD4-CD8-\nOwner: Yilin Qi"},
+			      {title:"Tgd_Sp", key: "Tgd_Sp", icon: false, tooltip: "Population Name: Tgd_Sp\nGroup Name: gd T cells\nLong Name: Total Splenic gdT cells\nDescription: 6 week old C57BL/6J mice sorted on TCRd+CD3+CD24-CD4-CD8-\nOwner: Yilin Qi"}
+			  ]
+			 },
+			 
+			 {title: "Granulocytes", isFolder: true, key: "Granulocytes", icon: false,
+			  children: [
+			      {title:"GN_BM", key: "GN_BM", icon: false, tooltip: "Population Name: GN_BM\nGroup Name: Granulocytes\nLong Name: Bone Marrow Neutrophil\nDescription: 6 week old C57BL/6J mice sorted on CD11b+ Ly6G+\nOwner: Andrew Rhoads"},
+			      {title:"GN_Sp", key: "GN_Sp", icon: false, tooltip: "Population Name: GN_Sp\nGroup Name: Granulocytes\nLong Name: Splenic Neutrophil\nDescription: 6 week old C57BL/6J mice sorted on CD11b+ Ly6G+\nOwner: Andrew Rhoads"},
+			      {title:"GN_Thio_PC", key: "GN_Thio_PC", icon: false, tooltip: "Population Name: GN_Thio_PC\nGroup Name: Granulocytes\nLong Name: Thio-induced Peritoneal Neutrophil\nDescription: 6 week old C57BL/6J mice sorted on CD11b+ Ly6G+\nOwner: Hide Yoshida"}
+			  ]
+			 },
+			 
+			 {title: "Innate Lymphocytes", isFolder: true, key: "Innate Lymphocytes", icon: false,
+			  children: [
+			      {title:"ILC2_SI", key: "ILC2_SI", icon: false, tooltip: "Population Name: ILC2_SI\nGroup Name: Innate Lymphocytes\nLong Name: ST2+ ILC2 siLP\nDescription: 6 week old C57BL/6J mice sorted on CD45+ CD3-CD19-CD127+KLRG1+ ST2+\nOwner: Michelle Robinette"},
+			      {title:"ILC2_ST2-_SI", key: "ILC2_ST2-_SI", icon: false, tooltip: "Population Name: ILC2_ST2-_SI\nGroup Name: Innate Lymphocytes\nLong Name: Small Intestine ST2- Innate Lymphoid Cell Type 2\nOwner: Michelle Robinette"},
+			      {title:"ILC3_CCR6+_SI", key: "ILC3_CCR6+_SI", icon: false, tooltip: "Population Name: ILC3_CCR6+_SI\nGroup Name: Innate Lymphocytes\nLong Name: Lamina Propia CCR6+ ILC3 \nDescription: 6 week old C57BL/6J mice sorted on CD45lo  CD3-CD19- NK1.1- Thy1+ NKp46- CCR6+\nOwner: Michelle Robinette"},
+			      {title:"ILC3_NKp46-CCR6-_SI", key: "ILC3_NKp46-CCR6-_SI", icon: false, tooltip: "Population Name: ILC3_NKp46-CCR6-_SI\nGroup Name: Innate Lymphocytes\nLong Name: Lamina Propia DN ILC3 \nDescription: 6 week old C57BL/6J mice sorted on CD45lo CD3-CD19- NK1.1- Thy1+ NKp46- CCR6-\nOwner: Michelle Robinette"},
+			      {title:"ILC3_NKp46+_SI", key: "ILC3_NKp46+_SI", icon: false, tooltip: "Population Name: ILC3_NKp46+_SI\nGroup Name: Innate Lymphocytes\nLong Name: Lamina Propia NKp46+ ILC3 \nDescription: 6 week old C57BL/6J mice sorted on CD45lo  CD3-CD19- NK1.1- Thy1+ NKp46+ CCR6-\nOwner: Michelle Robinette"},
+			      {title:"NK_27-11b+_BM", key: "NK_27-11b+_BM", icon: false, tooltip: "Population Name: NK_27-11b+_BM\nGroup Name: Innate Lymphocytes\nLong Name: Bone Marrow CD27- CD11b+ Natural Killer\nDescription: 6 week old C57BL/6J mice sorted on CD3-CD19-NK1.1+ CD127-CD51-CD49a- DX5+CD11b+CD27-\nOwner: Tsukasa Nabekura"},
+			      {title:"NK_27+11b-_BM", key: "NK_27+11b-_BM", icon: false, tooltip: "Population Name: NK_27+11b-_BM\nGroup Name: Innate Lymphocytes\nLong Name: Bone Marrow CD27+ CD11b- Natural Killer\nDescription: 6 week old C57BL/6J mice sorted on CD3-CD19-NK1.1+ CD127-CD51-CD49a- DX5+CD11b-CD27+\nOwner: Tsukasa Nabekura"},
+			      {title:"NK_27+11b+_BM", key: "NK_27+11b+_BM", icon: false, tooltip: "Population Name: NK_27+11b+_BM\nGroup Name: Innate Lymphocytes\nLong Name: Bone Marrow CD27+ CD11b+ Natural Killer\nDescription: 6 week old C57BL/6J mice sorted on CD3-CD19-NK1.1+ CD127-CD51-CD49a- DX5+CD11b+CD27+\nOwner: Tsukasa Nabekura"},
+			      {title:"NK_27-11b+_Sp", key: "NK_27-11b+_Sp", icon: false, tooltip: "Population Name: NK_27-11b+_Sp\nGroup Name: Innate Lymphocytes\nLong Name: Splenic CD27- CD11b+ Natural Killer\nDescription: 6 week old C57BL/6J mice sorted on CD3-CD19-NK1.1+ CD127-CD51-CD49a- DX5+CD11b+CD27-\nOwner: Tsukasa Nabekura"},
+			      {title:"NK_27+11b-_Sp", key: "NK_27+11b-_Sp", icon: false, tooltip: "Population Name: NK_27+11b-_Sp\nGroup Name: Innate Lymphocytes\nLong Name: Splenic CD27+ CD11b- Natural Killer\nDescription: 6 week old C57BL/6J mice sorted on CD3-CD19-NK1.1+ CD127-CD51-CD49a- DX5+CD11b-CD27+\nOwner: Tsukasa Nabekura"},
+			      {title:"NK_27+11b+_Sp", key: "NK_27+11b+_Sp", icon: false, tooltip: "Population Name: NK_27+11b+_Sp\nGroup Name: Innate Lymphocytes\nLong Name: Splenic CD27+ CD11b+ Natural Killer\nDescription: 6 week old C57BL/6J mice sorted on CD3-CD19-NK1.1+ CD127-CD51-CD49a- DX5+CD11b+CD27+\nOwner: Tsukasa Nabekura"}
+			  ]
+			 },
+			 
+			 {title: "Macrophages", isFolder: true, key: "Macrophages", icon: false,
+			  children: [
+			      {title:"MF_PC", key: "MF_PC", icon: false, tooltip: "Population Name: MF_PC\nGroup Name: Macrophages\nLong Name: Peritoneal Macrophages\nDescription: 6 week old C57BL/6J mice sorted on F4/80+ICAM2+CD5-CD19-CD43-\nOwner: Andrew Rhoads"},
+			      {title:"MF_Fem_PC", key: "MF_Fem_PC", icon: false, tooltip: "Population Name: MF_Fem_PC\nGroup Name: Macrophages\nLong Name: Female Peritoneal Macrophages\nDescription: 6 week old C57BL/6J mice sorted on F4/80+ICAM2+CD5-CD19-CD43-\nOwner: Andrew Rhoads"},
+			      //{title:"MF_226+II+480lo_PC", key: "MF_226+II+480lo_PC", icon: false, tooltip: "Population Name: MF_226+II+480lo_PC\nGroup Name: Macrophages\nLong Name: Peritoneal Small Macrophages\nDescription: 6 week old C57BL/6J mice sorted on CD115+CD11b+F4/80loCD102loMHCII+CD226+\nOwner: Kiwook Kim"},
+			      //{title:"MF_102+480+_PC", key: "MF_102+480+_PC", icon: false, tooltip: "Population Name: MF_102+480+_PC\nGroup Name: Macrophages\nLong Name: Peritoneal Large Macrophages\nDescription: 6 week old C57BL/6J mice sorted on CD115+CD11b+F4/80+CD102+MHCIIloCD226-\nOwner: Kiwook Kim"},
+			      //{title:"MF_RP_Sp", key: "MF_RP_Sp", icon: false, tooltip: "Population Name: MF_RP_Sp\nGroup Name: Macrophages\nLong Name: Red Pulp Macrophages\nDescription: 6 week old C57BL/6J mice sorted on Mertk+ CD64+ CD11blo F4/80+\nOwner: Kiwook Kim"},
+			      {title:"MF_Alv_Lu", key: "MF_Alv_Lu", icon: false, tooltip: "Population Name: MF_Alv_Lu\nGroup Name: Macrophages\nLong Name: Alveolar Macrophages\nDescription: 6 week old C57BL/6J mice sorted on CD45+ CD11c+ SiglecF+\nOwner: Barbara Maier & Stefan Jordan"},
+			      {title:"MF_pIC_Alv_Lu", key: "MF_pIC_Alv_Lu", icon: false, tooltip: "Population Name: MF_pIC_Alv_Lu\nGroup Name: Macrophages\nLong Name: Alveolar Macrophages, Poly IC\nDescription: 6 week old C57BL/6J mice sorted on CD45+ CD11c+ SiglecF+\nOwner: Barbara Maier & Stefan Jordan"}
+			      //{title:"MF_microglia_CNS", key: "MF_microglia_CNS", icon: false, tooltip: "Population Name: MF_microglia_CNS\nGroup Name: Macrophages\nLong Name: Brain Microglia\nDescription: 6 week old C57BL/6J mice sorted on CD19-CD3-Ly6G-CD45loCD11b+ CD64+ F4/80loCD206-\nOwner: Kiwook Kim"},
+			      //{title:"MF_SI", key: "MF_SI", icon: false, tooltip: "Population Name: MF_SI\nGroup Name: Macrophages\nLong Name: Lamina Propia Macrophages\nDescription: 6 week old C57BL/6J mice sorted on CD45+CD3–B220–MHCII+CD11c+CD103–CD11b+CD8–CD64+CX3Cr1+ \nOwner: Aleksey Chudnovskiy & Arthur Mortha"}
+			  ]
+			 },
+			 
+			 {title: "Mast and Basophils", isFolder: true, key: "Mast and Basophils", icon: false,
+			  children: [
+			  	{title:"MC_heparinase_PC", key: "MC_heparinase_PC", icon: false, tooltip: "Population Name: MC_heparinase_PC\nGroup Name: Mast and Basophils\nLong Name: Peritoneal heparinase Myeloid Cells\nDescription: \nOwner: Dan Dwyer"}
+			  ]
+			 },
+			 //{title: "Monocytes", isFolder: true, key: "Monocytes", icon: false,
+		         // children: [
+		         //
+			 //     {title:"Mo_6C+II-_Bl", key:"Mo_6C+II-_Bl", icon: false, tooltip: "Population Name: Mo_6C+II-_Bl\nGroup Name: Monocytes\nLong Name: Ly6Chi blood Monocytes\nDescription: 6 week old C57BL/6J mice sorted on B220-CD3-Ly6G-CD45+CD115+CD11b+Ly6C+\nOwner: Kiwook Kim"},
+			 //     {title:"Mo_6C-II-_Bl", key:"Mo_6C-II-_Bl", icon: false, tooltip: "Population Name: Mo_6C-II-_Bl\nGroup Name: Monocytes\nLong Name: Ly6Clo blood Monocytes\nDescription: 6 week old C57BL/6J mice sorted on B220-CD3-Ly6G-CD45+CD115+CD11b+Ly6C-\nOwner: Kiwook Kim"}
+		         //
+			 // ]},
+			  
+			  {title: "Stem Cells", isFolder: true, key: "Stem Cells", icon: false,
+			  children: [
+			      {title:"LTHSC_34-_BM", key: "LTHSC_34-_BM", icon: false, tooltip: "Population Name: LTHSC_34-_BM\nGroup Name: Stem Cells\nLong Name: Bone Marrow 34- LTHSC/Bone Marrow 34- Long Term hematopoietic stem cells\nDescription: 6 week old C57BL/6J mice sorted on Lin-Sca1+ckit+CD135-CD150+CD48-CD34-\nOwner: Amy Wagers"},
+			      {title:"LTHSC_34+_BM", key: "LTHSC_34+_BM", icon: false, tooltip: "Population Name: LTHSC_34+_BM\nGroup Name: Stem Cells\nLong Name: Bone Marrow 34+ LTHSC/Bone Marrow 34+ Long Term hematopoietic stem cells\nDescription: 6 week old C57BL/6J mice sorted on Lin-Sca1+ckit+CD135-CD150+CD48-CD34+\nOwner: Amy Wagers"},
+			      {title:"STHSC_150-_BM", key: "STHSC_150-_BM", icon: false, tooltip: "Population Name: STHSC_150-_BM\nGroup Name: Stem Cells\nLong Name: Bone Marrow CD150- Short Term HSC/Bone Marrow CD150- Short Term Hematopoietic Stem Cell\nDescription: 6 week old C57BL/6J mice sorted on Lin-Sca1+ckit+CD135-CD150-CD48-\nOwner: Amy Wagers"},
+			      {title:"MMP2_150+48+_BM", key: "MMP2_150+48+_BM", icon: false, tooltip: "Population Name: MMP2_150+48+_BM\nGroup Name: Stem Cells\nLong Name: Bone Marrow CD150+ CD48+ MMP2/Bone Marrow CD150+ CD48+ matrix metalloproteinases 2"},
+			      {title:"MMP3_48+_BM", key: "MMP3_48+_BM", icon: false, tooltip: "Population Name: MMP3_48+_BM\nGroup Name: Stem Cells\nLong Name: Bone Marrow CD150+ CD48+ MMP3/Bone Marrow CD150+ CD48+ matrix metalloproteinases 3\nDescription: 6 week old C57BL/6J mice sorted on Lin-Sca1+ckit+CD135-CD150-CD48+\nOwner: Amy Wagers"},
+			      {title:"MMP4_135+_BM", key: "MMP4_135+_BM", icon: false, tooltip: "Population Name: MMP4_135+_BM\nGroup Name: Stem Cells\nLong Name: Bone Marrow CD150+ CD48+ MMP4/Bone Marrow CD150+ CD48+ matrix metalloproteinases 4\nDescription: 6 week old C57BL/6J mice sorted on Lin-Sca1+ckit+CD135+\nOwner: Amy Wagers"}
+		
+			  ]
+			 },
+			 
+			 {title: "Stromal Cells", isFolder: true, key: "Stromal Cells", icon: false,
+		          children: [
+		
+			      {title:"Ep_MEChi_Th", key:"Ep_MEChi_Th", icon: false, tooltip: "Population Name: Ep_MEChi_Th\nGroup Name: Stromal Cells\nLong Name: Thymic Medullary Epithelial cells, MHCIIhi\nDescription: 6 week old C57BL/6J mice sorted on CD45-Ly51loMHC-IIhiEPCAMhi\nOwner: Hide Yoshida"},
+		              {title:"BEC_SLN", key:"BEC_SLN", icon: false, tooltip: "Population Name: BEC_SLN\nGroup Name: Stromal Cells\nLong Name: Subcutaneous Lymph Node Blood Endothelial Cell\nDescription: 6 week old C57BL/6J mice sorted on CD45- CD31+ PDPN- PNAd+\nOwner: Claudia Dominguez"},
+			      {title:"FRC_CD140a+_Madcam-_CD35-_SLN", key:"FRC_CD140a+_Madcam-_CD35-_SLN", icon: false, tooltip: "Population Name: FRC_CD140a+_Madcam-_CD35-_SLN\nGroup Name: Stromal Cells\nLong Name: Subcutaneous Lymph Node Fibroblastic Reticular Cell\nDescription: 6 week old C57BL/6J mice sorted on CD45- CD31- CD35- MadCAM- PDPN+ CD140+\nOwner: Claudia Dominguez"},
+			      {title:"LEC_SLN", key:"LEC_SLN", icon: false, tooltip: "Population Name: LEC_SLN\nGroup Name: Stromal Cells\nLong Name: Subcutaneous Lymph Node Lymphatic Endothelial Cell\nDescription: 6 week old C57BL/6J mice sorted on CD45- CD31+ PDPN+\nOwner: Claudia Dominguez"},
+			      {title:"IAP_SLN", key:"IAP_SLN", icon: false, tooltip: "Population Name: IAP_SLN\nGroup Name: Stromal Cells\nLong Name: Subcutaneous Lymph Node\nDescription: 6 week old C57BL/6J mice sorted on CD45- CD31- PDPN- ITGA7+\nOwner: Claudia Dominguez"}
+			  ]}
+		
+		         
+		     ] 
+		    }
+		
+		];
+		
+		$(function(){
+		
+		    // --- Initialize sample trees
+		
+		    $("#rnaseq_population_tree").dynatree({
+			checkbox: true,
+		        minExpandLevel:2,
+			selectMode: 3,
+			autoCollapse: true,
+			children: treeData,
+			onSelect: function(select, node) {
+			    // Get a list of all selected nodes, and convert to a key array:
+			    var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+				if (node.hasChildren() == false) { return node.data.key; }
+			    });
+			    //$("#echoSelection3").text(selKeys.join(", "));
+			    $("#rnaseq_group").text(selKeys.join(","));
+		
+		
+			    // Get a list of all selected TOP nodes
+			    var selRootNodes = node.tree.getSelectedNodes(true);
+			    // ... and convert to a key array:
+			    var selRootKeys = $.map(selRootNodes, function(node){
+				return node.data.key;
+			    });
+			    
+			    //$("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
+			    //$("#echoSelectionRoots3").text(selRootNodes.join(", "));
+			},
+			onDblClick: function(node, event) {
+			    node.toggleSelect();
+			},
+			onActivate: function(node) {
+				if( node.data.url ) window.open(node.data.url);
+			}
+			// The following options are only required, if we have more than one tree on one page:
+			//				initId: "treeData",
+			//cookieId: "dynatree-Cb3",
+			//idPrefix: "dynatree-Cb3-"
+		    });
+		
+		    //$("#chromatin2_tree").dynatree({
+			//checkbox: true,
+		    //   minExpandLevel:2,
+			//selectMode: 3,
+			//autoCollapse: true,
+			//children: treeData2,
+			//onSelect: function(select, node) {
+			//    // Get a list of all selected nodes, and convert to a key array:
+			//    var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+			//	if (node.hasChildren() == false) { return node.data.key; }
+			//    });
+			//    //$("#echoSelection3").text(selKeys.join(", "));
+			//    $("#Grp2").text(selKeys.join(","));
+		    //
+		    //
+			//    // Get a list of all selected TOP nodes
+			//    var selRootNodes = node.tree.getSelectedNodes(true);
+			//    // ... and convert to a key array:
+			//    var selRootKeys = $.map(selRootNodes, function(node){
+			//	return node.data.key;
+			//    });
+			//    
+			//    //$("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
+			//    //$("#echoSelectionRoots3").text(selRootNodes.join(", "));
+			//},
+			//onDblClick: function(node, event) {
+			//    node.toggleSelect();
+			//},
+		    //
+			//// The following options are only required, if we have more than one tree on one page:
+			////				initId: "treeData",
+			////cookieId: "dynatree-Cb3",
+			////idPrefix: "dynatree-Cb3-"
+		    //);
+		    
+		    $("#skinCombo")
+			.val(0) // set state to prevent caching
+			.change(function(){
+			    var href = "../src/"
+				+ $(this).val()
+				+ "/ui.dynatree.css"
+				+ "?reload=" + new Date().getTime();
+			    $("#skinSheet").attr("href", href);
+			});
+			
+			$("#rnaseq_datagroup_list").on("changed.bs.select", function(e, clickedIndex, newValue, oldValue) {
+    				var slected_item = $(e.currentTarget).val();	
+    				if(slected_item == 'ImmGen ULI RNASeq') {
+    					document.getElementById('rnaseq_population_option_group').style.display = 'block';
+    				}
+    				else {
+    					document.getElementById('rnaseq_population_option_group').style.display = 'none';
+    				}
+    			});
+    			
+			$("#rnaseq_population_list").on("changed.bs.select", function(e, clickedIndex, newValue, oldValue) {
+    				if(clickedIndex == 1) {
+    					document.getElementById('rnaseq_population_tree').style.display = 'block';
+    				}
+    				else {
+    					document.getElementById('rnaseq_population_tree').style.display = 'none';
+    				}
+    			});
+    			
+    			$("#rnaseq_population_list").on("shown.bs.select", function(e) {
+    				var slected_item = $(e.currentTarget).val();
+    				if(slected_item == 'Select the populations of interest') {
+    					document.getElementById('rnaseq_population_tree').style.display = 'block';
+    				}
+    			});
+    			
+		
+		});
+		
+		
+		////////////////////////////////////////////////////////////////
+		
+    		$(document).ready(function() {
+    			$("#microarray_submit").click(function(){
+    				var microarray_datagroup = $("#microarray_datagroup_list").val();
+    				var microarray_gene = $("#microarray_Gene").val();
+				var microarray_scale_option = $("#microarray_scaling_list").val();
+				var microarray_probeset_id = hashtable[microarray_gene];
+				var microarray_genesymbol = hashtable_gene[microarray_gene];
+				
+				description1 = "Gene Symbol: " + hashtable_gene[microarray_gene];
+				description2 = "Expression Value";
+				
+				if(!microarray_datagroup) {
+					alert ("Please select one data group\n");
+				}
+				else if(gene_info.indexOf(microarray_gene) == -1) 
+				{ 
+					alert ("The ProbeSet ID or Gene Symbol can NOT be found!\n"); 
+				}
+				else {
+					chart.selectAll("*").remove();
+					var jsonText = $.ajax({                                         
+						type: 'POST',      
+						url: 'get_data.php',               
+						data: {'type': 'microarray',  'probeset_id': microarray_probeset_id, 'genesymbol':microarray_genesymbol, 'datagroup': microarray_datagroup},
+						async: false
+					}).responseText; 
+					//alert(jsonText);
+					results = JSON.parse(jsonText); 
+					meta_info = results.meta;
+					kegg_info = results.kegg;
+					go_info = results.go;
+					orthology_info = results.orthology;
+					dataset = results.data;
+					max = results.max;
+					
+					document.getElementById('microarray_meta_info').style.display="";
+					//document.getElementById('microarray_summary_note').style.display="";
+					//document.getElementById('microarray_go_note').style.display="";
+					document.getElementById('microarray_save_option').style.display="";
+					document.getElementById('rnaseq_save_option').style.display="none";
+					document.getElementById('microarray_gene_symbol').innerHTML = meta_info["Gene_Symbol"];
+					document.getElementById('microarray_gene_name').innerHTML = meta_info["GeneName"];
+					document.getElementById('microarray_synonyms').innerHTML = meta_info["Synonyms"].replace(/\|/g, "; ");
+					document.getElementById('microarray_type').innerHTML = meta_info["Feature_type"];
+					if(!orthology_info["Summary"] || orthology_info["Summary"] == 'NA'){
+						document.getElementById('microarray_summary').innerHTML = 'NA';
+					}
+					else {
+						document.getElementById('microarray_summary').innerHTML = orthology_info["Summary"];
+					}
+					if(meta_info["Chr"] == 'NA' ) {
+						document.getElementById('microarray_seq_map').innerHTML = 'NA';
+						//document.getElementById('microarray_genetic_map').innerHTML = 'NA';
+					}
+					else {
+						document.getElementById('microarray_seq_map').innerHTML = 'Chr' + meta_info["Chr"] + ':' + meta_info["Start"] + '-' + meta_info["End"] + ', ' + meta_info["Strand"] + ' strand';
+						//document.getElementById('microarray_genetic_map').innerHTML = 'Chromosome ' + meta_info["Chr"] + ', ' + meta_info["cM_Position"] + ' cM';
+					}
+					if(meta_info["Entrez_Gene_ID"] == 'NA'){
+						document.getElementById('microarray_ncbi_id').innerHTML = 'NA';
+					}
+					else {
+						document.getElementById('microarray_ncbi_id').innerHTML = '<a href="https://www.ncbi.nlm.nih.gov/gene/' + meta_info["Entrez_Gene_ID"] + '" target="_blank">' + meta_info["Entrez_Gene_ID"] + '</a>';
+					}
+					if(meta_info["Ensembl_ID"] == 'NA'){
+						document.getElementById('microarray_ensembl_id').innerHTML = 'NA';
+					}
+					else {
+						document.getElementById('microarray_ensembl_id').innerHTML = '<a href="http://www.ensembl.org/Mus_musculus/geneview?gene=' + meta_info["Ensembl_ID"] + '" target="_blank">' + meta_info["Ensembl_ID"] + '</a>';
+					}
+					//if(meta_info["MGI_ID"] == 'NA'){
+					//	document.getElementById('microarray_MGI_id').innerHTML = 'NA';
+					//}
+					//else{
+					//	document.getElementById('microarray_MGI_id').innerHTML = '<a href="http://www.informatics.jax.org/marker/' + meta_info["MGI_ID"] + '" target="_blank">' + meta_info["MGI_ID"] + '</a>';
+					//}
+					if(!orthology_info["Human_GeneSymbol"] || orthology_info["Human_GeneSymbol"] == 'NA'){
+						document.getElementById('microarray_human_orthology').innerHTML = 'NA';
+					}
+					else{
+						document.getElementById('microarray_human_orthology').innerHTML = '<a href="https://www.ncbi.nlm.nih.gov/gene/' + orthology_info["Human_EntrezID"] + '" target="_blank">' + orthology_info["Human_GeneSymbol"] + '</a>';
+					}
+					document.getElementById('microarray_wikipedia_id').innerHTML = '<a href="https://en.wikipedia.org/wiki/' + meta_info["Gene_Symbol"] + '" target="_blank">' + meta_info["Gene_Symbol"] + '</a>';
+					
+					//document.getElementById('microarray_GO').innerHTML = '<p><a href="http://www.informatics.jax.org/go/marker/' + meta_info["MGI_ID"] + '#tabular" target="_blank">Tablular View</a></p><p><a href="http://www.informatics.jax.org/marker/gograph/' + meta_info["MGI_ID"] + '" target="_blank">Graph View</a></p>';
+					var go_text='';
+					for(var g = 0; g < go_info.length; g++){
+						go_text = go_text + '<p><a href="http://amigo.geneontology.org/amigo/term/' + go_info[g]['go_id'] + '" target="_blank">' + go_info[g]['go_name'] + ' (' + go_info[g]['go_category'] + ')</a></p>';
+					}
+					if(go_info.length){
+						document.getElementById('microarray_GO').innerHTML = go_text;
+						document.getElementById('microarray_GO_showAll').style.display="";
+					}
+					else{
+						document.getElementById('microarray_GO').innerHTML = 'NA';
+						document.getElementById('microarray_GO_showAll').style.display="none";
+					}
+					document.getElementById('microarray_GO_showAll').innerHTML = '<p><b>Show All:</b>&#9;&#9;<a href="http://www.informatics.jax.org/go/marker/' + meta_info["MGI_ID"] + '#tabular" target="_blank">Tablular View</a>&#9;|&#9;<a href="http://www.informatics.jax.org/marker/gograph/' + meta_info["MGI_ID"] + '" target="_blank">Graph View</a></p>';
+					
+					var kegg_text='';
+					for(var k = 0; k < kegg_info.length; k++){
+						kegg_text = kegg_text + '<p><a href="http://www.genome.jp/kegg-bin/show_pathway?' + kegg_info[k]['kegg_id'] + '+' + meta_info["Entrez_Gene_ID"] + '" target="_blank">' + kegg_info[k]['kegg_name'] + '</a></p>';
+					}
+					if(kegg_info.length){
+						document.getElementById('microarray_kegg').innerHTML = kegg_text;
+					}
+					else{
+						document.getElementById('microarray_kegg').innerHTML = 'NA';
+					}
+					
+					var dataset_sorting_info = [];
+					for(var i=0; i<dataset.length; i++) {
+						dataset_sorting_info.push({"sorting_info": dataset[i].sorting_info});
+					}
+					
+					//////////////////////////////////////////////////////////////////////////////
+					var yScale = d3.scaleBand()
+							.domain(dataset.map(function(d) { return d.short_name; }))
+							.rangeRound([0, height]);
+    				                                
+					var xScale;
+					if(microarray_scale_option =='Local'){
+						xScale = d3.scaleLinear()
+    							.domain([0, d3.max(dataset, function(d) { return d.value; })*1.05]) 
+    							.range([0, width]);
+    					}
+    					else if(microarray_scale_option =='Global'){
+						xScale = d3.scaleLinear()
+    							.domain([0, max]) 
+    							.range([0, width]);
+    					}
+    					else if(microarray_scale_option =='Local (log10)'){
+						xScale = d3.scaleLog().base(10).nice()
+    							.domain([1, d3.max(dataset, function(d) { return d.value; })*2]) 
+    							.range([0, width]);
+    					}
+    					else if(microarray_scale_option =='Global (log10)'){
+						xScale = d3.scaleLog().base(10).nice()
+    							//.domain([0, d3.max(dataset, function(d) { if(d.type == 'max') return d.value; })*1.05]) 
+    							.domain([1, max*2]) 
+    							.range([0, width]);
+    					}
+    					
+    					chart.append("text")
+    						.attr("x", width/2 + margin.left)             
+    						.attr("y", margin.top/5)
+    						.attr("text-anchor", "middle")
+    						.style("font-size", "15px")
+    						.style("font-weight", "bold")
+    						.style("font-family", "sans-serif")
+    						.text(description1)
+    						.on("mouseover", function(d) {
+    							d3.select(this).style("fill", "blue");
+    							d3.select(this).style("font-size", "16px");
+    							d3.select(this).style("cursor", "hand");
+    						})
+    						.on("mouseout", function(d) {
+    							d3.select(this).style("fill", "black");
+    							d3.select(this).style("font-size", "15px");
+    						})
+    						.on("click", function(){
+    							window.open("https://www.ncbi.nlm.nih.gov/gene/?term=" + microarray_genesymbol, '_blank');
+    							window.focus();
+    						})
+    						.append('title')
+    						.text("Click to show gene information");
+    						
+    					chart.append("text")
+    						.attr("x", width/2 + margin.left)             
+    						.attr("y", 3*margin.top/5)
+    						.attr("text-anchor", "middle")
+    						.style("font-size", "13px")
+    						.style("font-family", "sans-serif")
+    						.text(description2);		
+    							
+    					var xAxis;
+    					if((microarray_scale_option =='Global (log10)')||(microarray_scale_option =='Local (log10)')){
+    						xAxis = d3.axisTop()
+    							.scale(xScale)
+    							.tickSizeInner(-height)
+    							.tickSizeOuter(0)
+    							.tickPadding(5)
+    							.tickFormat(d3.format(",d"))
+    							.tickValues([1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000]);
+    					}
+    					else {
+    						xAxis = d3.axisTop()
+    							.scale(xScale)
+    							.tickSizeInner(-height)
+    							.tickSizeOuter(0)
+    							.tickPadding(5)
+    							.tickFormat(d3.format(",d"));
+    					}
+    					
+    					var yAxis = d3.axisLeft()                         
+    							.scale(yScale);		
+    					
+    					var bar = chart.selectAll("g")
+    							.data(dataset)  
+    							.enter()
+    							.append("g")
+    							//.filter(function(d){
+    							//	if(microarray_scale_option == 'Local') {
+    							//		return d.type == 'data';
+    							//	}
+    							//	else{
+    							//		return d.type != '';
+    							//	}
+    							//})
+    							.attr("transform", function(d, i){
+    								return "translate(0, "+yScale(d.short_name)+")";
+    							});
+    					
+    					bar.append("rect")
+    						.attr("y", function(d,i){
+    							return  margin.top + yScale.bandwidth()/16;
+    						})
+    						.attr("height", yScale.bandwidth()*7/8)
+    						.attr("x", margin.left)
+    						.attr("width", 0)
+    						.style("fill", function(d) { return d.color; })
+    						.on("mouseover", function(d) {
+    						
+    							var xPosition = d3.event.pageX+10;  
+    							var yPosition = d3.event.pageY+10;
+    							if((window.innerWidth-xPosition) < 400) xPosition = xPosition - 400;                                                                 
+    							if((window.innerHeight-yPosition) < 210) yPosition = yPosition - 210;
+    							
+    							//if(d.type == 'max'){
+    							//	d3.select(this).style("fill", "#C48793");
+    							//	//d3.select(this).style("cursor", "hand");
+    							//	//Update the tooltip position and value
+  	             					//	d3.select("#tooltip_max")
+  	             					//	  .style("left", xPosition + "px")
+  	             					//	  .style("top",  yPosition + "px")
+  	             					//	  .select("#population_max")
+  	             					//	  .text(d.short_name);      
+  	             					//	
+  	             					//	d3.select("#tooltip_max")
+  	             					//	  .style("left", xPosition + "px")
+  	             					//	  .style("top", yPosition + "px")
+  	             					//	  .select("#expr_value_max")
+  	             					//	  .text(d.value);
+  	             					//	  
+  	             					//	d3.select("#tooltip_max")
+  	             					//	  .style("left", xPosition + "px")
+  	             					//	  .style("top", yPosition + "px")
+  	             					//	  .select("#long_name_max")
+  	             					//	  .text(d.long_name);
+  	             					//	
+  	             					//	d3.select("#tooltip_max")
+  	             					//	  .style("left", xPosition + "px")
+  	             					//	  .style("top", yPosition + "px")
+  	             					//	  .select("#desc_max")
+  	             					//	  .text(d.description);
+  	             					//	  
+  	             					//	d3.select("#tooltip_max")
+  	             					//	  .style("left", xPosition + "px")
+  	             					//	  .style("top", yPosition + "px")
+  	             					//	  .select("#author_max")
+  	             					//	  .text(d.author);
+  	             					//	  
+  	             					//	d3.select("#tooltip_max")
+  	             					//	  .style("left", xPosition + "px")
+  	             					//	  .style("top", yPosition + "px")
+  	             					//	  .select("#number_of_sample_max")
+  	             					//	  .text(d.number_of_sample);
+  	             					//	  
+  	             					//	//d3.select("#tooltip")
+  	             					//	 // .style("left", xPosition + "px")
+  	             					//	 // .style("top", yPosition + "px")
+  	             					//	 // .select("#sorting_info")
+  	             					//	 // .text(d.number_of_sample);
+  	             					//	  
+  	             					//	//Show the tooltip
+  	             					//	d3.select("#tooltip_max").classed("hidden", false);
+    							//}
+    							//else{
+    								d3.select(this).style("fill", "#454545");
+    								//d3.select(this).style("cursor", "hand");
+    								//Update the tooltip position and value
+  	             						d3.select("#tooltip")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top",  yPosition + "px")
+  	             						  .select("#population")
+  	             						  .text(d.short_name);      
+  	             						
+  	             						d3.select("#tooltip")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top", yPosition + "px")
+  	             						  .select("#expr_value")
+  	             						  .text(d.value);
+  	             						  
+  	             						d3.select("#tooltip")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top", yPosition + "px")
+  	             						  .select("#long_name")
+  	             						  .text(d.long_name);
+  	             						
+  	             						d3.select("#tooltip")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top", yPosition + "px")
+  	             						  .select("#desc")
+  	             						  .text(d.description);
+  	             						  
+  	             						d3.select("#tooltip")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top", yPosition + "px")
+  	             						  .select("#author")
+  	             						  .text(d.author);
+  	             						  
+  	             						d3.select("#tooltip")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top", yPosition + "px")
+  	             						  .select("#number_of_sample")
+  	             						  .text(d.number_of_sample);
+  	             						  
+  	             						//d3.select("#tooltip")
+  	             						 // .style("left", xPosition + "px")
+  	             						 // .style("top", yPosition + "px")
+  	             						 // .select("#sorting_info")
+  	             						 // .text(d.number_of_sample);
+  	             						  
+  	             						//Show the tooltip
+  	             						d3.select("#tooltip").classed("hidden", false);
+    							//}
+    						})
+    						.on("mouseout", function(d) {
+    							
+    							d3.select(this).style("fill", function(d) { return d.color; });
+    							d3.select("#tooltip").classed("hidden", true);  
+    							//d3.select("#tooltip_max").classed("hidden", true);  
+    						})
+    						.transition().delay(function (d,i){ return Math.floor(i/2) * 30;})
+    						.duration(500)
+    						.attr("x", function(d) { 
+    								//if(d.type == 'data') {
+    									return margin.left;
+    								//}
+    								//else if(d.type == 'max') {
+    								//	return margin.left + xScale(d.start);
+    								//}
+    								
+    							} )
+    						.attr("width", function(d) { 
+    							if((microarray_scale_option =='Global (log10)')||(microarray_scale_option =='Local (log10)')){
+    								if((xScale(d.value) - xScale(1)) > 0) {
+    									return xScale(d.value) - xScale(1); 
+    								}
+    								else {
+    									return 0;
+    								}
+    							}
+    							else {
+    								return xScale(d.value) - xScale(d.start); 
+    							}
+    						});
+    					
+    					var x_axis = chart.append("g")
+    							.attr("class", "x axis")
+    							.attr("transform", "translate(" + margin.left + "," + margin.top + ")")  
+    							//.style("font-family", "sans-serif")
+    							//.style("font-size", "10px")
+    							//.style("stroke-width", 1)
+    							.call(xAxis);
+    					
+    					var y_axis = chart.append("g")
+    							.attr("class", "y axis")
+    							//.attr("xlink:href", "https://www.google.com")
+    							.attr("transform", function(d,i){
+    								//if(sel == 1){
+    								//	return "translate(" + margin.left + "," +  2*yScale.rangeBand() + ")";
+    								//}
+    								//else{
+    									return  "translate(" + margin.left + "," + margin.top + ")";
+    								//}
+    							})
+    							//"translate(" + margin.left + "," +  2*yScale.rangeBand() + ")")
+    							//.style("font-family", "sans-serif")
+    							//.style("font-size", "10px")
+    							//.style({'fill': 'none', 'stroke-width': '1px'})
+    							.call(yAxis);
+    					                                                                                                                   
+    						
+    					d3.selectAll('.axis').style({ 'font-size': '11px', 'font-family':'sans-serif'});
+ 					d3.selectAll('.axis line, .axis path').style({ 'stroke-width': '1px', 'fill':'none', 'stroke': '#000', 'shape-rendering': 'crispEdges'});
+ 					d3.selectAll('.y.axis path').style({'display':'none'});
+ 					d3.selectAll('.tick line').style({'opacity':0.2});
+ 					d3.selectAll('.y.axis .tick').append('title').text("Click to show sorting information");
+ 					
+ 					d3.selectAll('.y.axis .tick')
+ 						.data(dataset_sorting_info)
+ 						.on("mouseover", function(d) {
+    							d3.select(this).style("fill", "red");
+    							d3.select(this).style("font-size", "12px");
+    							d3.select(this).style("font-weight", "bold");
+    							d3.select(this).style("cursor", "hand");
+    						})
+    						.on("mouseout", function(d) {
+    							d3.select(this).style("fill", "black");
+    							d3.select(this).style("font-size", "11px");
+    							d3.select(this).style("font-weight", "normal");
+    						})
+    						.on("click", function(d) {
+    							if(d.sorting_info){
+    								window.open("http://www.immgen.org/databrowser/viewPopulationPDF?popId=" + d.sorting_info, '_blank');
+    								window.focus();
+    							}
+    							else{
+    								alert("Sorry! The sorting information is NOT available.");
+    							}
+    						});
+				}
+    			});
+    			
+    			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    			
+    			$("#rnaseq_submit").click(function(){
+    				
+    				document.getElementById('rnaseq_population_tree').style.display = 'none';
+    				
+    				var rnaseq_datagroup = $("#rnaseq_datagroup_list").val();
+    				var rnaseq_gene = $("#rnaseq_Gene").val();
+				var rnaseq_scale_option = $("#rnaseq_scaling_list").val();
+				var rnaseq_population_option = $("#rnaseq_population_list").val();
+				var rnaseq_population = $("#rnaseq_group").text();
+				//alert(rnaseq_gene);
+				//alert(rnaseq_population_option);
+				//alert(rnaseq_population);
+				description1 = "Gene Symbol: " + rnaseq_gene;
+				description2 = "Expression Value Normalized by DESeq2";
+				
+				if(!rnaseq_datagroup) {
+					alert ("Please select one data group\n");
+				}
+				else if(gene_info_gencode_GRCm38.indexOf(rnaseq_gene) == -1) 
+				{ 
+					//alert ("The Gene Symbol can NOT be found!\n"); 
+					$("#AlertModal_genesymbol").modal('show');
+				}
+				else {
+					chart.selectAll("*").remove();
+					var jsonText = $.ajax({                                         
+						type: 'POST',      
+						url: 'get_data.php',               
+						data: {'type': 'rnaseq',  'probeset_id': rnaseq_gene, 'datagroup': rnaseq_datagroup, 'population': rnaseq_population, 'key_population': rnaseq_population_option},
+						async: false
+					}).responseText; 
+					//alert(jsonText);
+					results = JSON.parse(jsonText); 
+					meta_info = results.meta;
+					kegg_info = results.kegg;
+					go_info = results.go;
+					orthology_info = results.orthology;
+					dataset = results.data;
+					max = results.max;
+					pop_group_num = results.pop_group_num;
+					
+					var rowlabel_font_size;
+					if(dataset.length > 0 && dataset.length <= 20) {
+						rowlabel_font_size = 14;
+					} 
+					else if(dataset.length > 20 && dataset.length <= 40) {
+						rowlabel_font_size = 13;
+					} 
+					else if(dataset.length > 40 && dataset.length <= 60) {
+						rowlabel_font_size = 12;
+					}
+					else if(dataset.length > 60 && dataset.length <= 80){
+						rowlabel_font_size = 11;
+					}
+					else {
+						rowlabel_font_size = 10;
+					}
+					
+					document.getElementById('rnaseq_meta_info').style.display="";
+					//document.getElementById('rnaseq_summary_note').style.display="";
+					//document.getElementById('rnaseq_go_note').style.display="";
+					document.getElementById('rnaseq_save_option').style.display="";
+					document.getElementById('rnaseq_gene_symbol').innerHTML = meta_info["Gene_Symbol_MGI"];
+					document.getElementById('rnaseq_gene_name').innerHTML = meta_info["GeneName"];
+					document.getElementById('rnaseq_synonyms').innerHTML = meta_info["Synonyms"].replace(/\|/g, "; ");
+					document.getElementById('rnaseq_type').innerHTML = meta_info["Feature_type"];
+					document.getElementById('rnaseq_linkout').innerHTML = "";
+					if(!orthology_info["Summary"] || orthology_info["Summary"] == 'NA'){
+						document.getElementById('rnaseq_summary').innerHTML = 'NA';
+						document.getElementById("rnaseq_summary").style.height = "auto";
+					}
+					else {
+						document.getElementById('rnaseq_summary').innerHTML = orthology_info["Summary"];
+						document.getElementById("rnaseq_summary").style.height = "80px";
+					}
+					if(meta_info["Chr"] == 'NA' ) {
+						document.getElementById('rnaseq_seq_map').innerHTML = 'NA';
+						//document.getElementById('rnaseq_genetic_map').innerHTML = 'NA';
+					}
+					else {
+						document.getElementById('rnaseq_seq_map').innerHTML = 'Chr' + meta_info["Chr"] + ':' + meta_info["Start"] + '-' + meta_info["End"] + ', ' + meta_info["Strand"] + ' strand';
+						//document.getElementById('rnaseq_genetic_map').innerHTML = 'Chromosome ' + meta_info["Chr"] + ', ' + meta_info["cM_Position"] + ' cM';
+					}
+					if(meta_info["Entrez_Gene_ID"] == 'NA'){
+						//document.getElementById('rnaseq_ncbi_id').innerHTML = 'NA';
+					}
+					else {
+						//document.getElementById('rnaseq_ncbi_id').innerHTML = '<a href="https://www.ncbi.nlm.nih.gov/gene/' + meta_info["Entrez_Gene_ID"] + '" target="_blank">' + meta_info["Entrez_Gene_ID"] + '</a>';
+						document.getElementById('rnaseq_linkout').innerHTML = '<a href="https://www.ncbi.nlm.nih.gov/gene/' + meta_info["Entrez_Gene_ID"] + '" target="_blank">NCBI</a>';
+					
+					}
+					if(meta_info["Ensembl_ID"] == 'NA'){
+						//document.getElementById('rnaseq_ensembl_id').innerHTML = 'NA';
+					}
+					else {
+						//document.getElementById('rnaseq_ensembl_id').innerHTML = '<a href="http://www.ensembl.org/Mus_musculus/geneview?gene=' + meta_info["Ensembl_ID"] + '" target="_blank">' + meta_info["Ensembl_ID"] + '</a>';
+						document.getElementById('rnaseq_linkout').innerHTML += '&emsp;<a href="http://www.ensembl.org/Mus_musculus/geneview?gene=' + meta_info["Ensembl_ID"] + '" target="_blank">Ensembl</a>';
+					}
+					//if(meta_info["MGI_ID"] == 'NA'){
+					//	document.getElementById('rnaseq_MGI_id').innerHTML = 'NA';
+					//}
+					//else{
+					//	document.getElementById('rnaseq_MGI_id').innerHTML = '<a href="http://www.informatics.jax.org/marker/' + meta_info["MGI_ID"] + '" target="_blank">' + meta_info["MGI_ID"] + '</a>';
+					//}
+					if(!orthology_info["Human_GeneSymbol"] || orthology_info["Human_GeneSymbol"] == 'NA'){
+						document.getElementById('rnaseq_human_orthology').innerHTML = 'NA';
+					}
+					else{
+						document.getElementById('rnaseq_human_orthology').innerHTML = '<a href="https://www.ncbi.nlm.nih.gov/gene/' + orthology_info["Human_EntrezID"] + '" target="_blank">' + orthology_info["Human_GeneSymbol"] + '</a>';
+					}
+					//document.getElementById('rnaseq_wikipedia_id').innerHTML = '<a href="https://en.wikipedia.org/wiki/' + meta_info["Gene_Symbol"] + '" target="_blank">' + meta_info["Gene_Symbol"] + '</a>';
+					document.getElementById('rnaseq_linkout').innerHTML += '&emsp;<a href="https://en.wikipedia.org/wiki/' + meta_info["Gene_Symbol"] + '" target="_blank">Wikipedia</a>';
+					
+					//document.getElementById('rnaseq_GO').innerHTML = '<p><a href="http://www.informatics.jax.org/go/marker/' + meta_info["MGI_ID"] + '#tabular" target="_blank">Tablular View</a></p><p><a href="http://www.informatics.jax.org/marker/gograph/' + meta_info["MGI_ID"] + '" target="_blank">Graph View</a></p>';
+					var go_text='';
+					for(var g = 0; g < go_info.length; g++){
+						go_text = go_text + '<p><a href="http://amigo.geneontology.org/amigo/term/' + go_info[g]['go_id'] + '" target="_blank">' + go_info[g]['go_name'] + ' (' + go_info[g]['go_category'] + ')</a></p>';
+					}
+					if(go_info.length>1){
+						document.getElementById('rnaseq_GO').innerHTML = go_text;
+						document.getElementById("rnaseq_GO").style.height = "85px";
+						document.getElementById('rnaseq_GO_showAll').style.display="";
+					}
+					else{
+						document.getElementById('rnaseq_GO').innerHTML = 'NA';
+						document.getElementById("rnaseq_GO").style.height = "auto";
+						document.getElementById('rnaseq_GO_showAll').style.display="none";
+					}
+					document.getElementById('rnaseq_GO_showAll').innerHTML = '<p><b>Show All:</b>&#9;&#9;<a href="http://www.informatics.jax.org/go/marker/' + meta_info["MGI_ID"] + '#tabular" target="_blank">Tablular View</a>&#9;|&#9;<a href="http://www.informatics.jax.org/marker/gograph/' + meta_info["MGI_ID"] + '" target="_blank">Graph View</a></p>';
+					
+					var kegg_text='';
+					for(var k = 0; k < kegg_info.length; k++){
+						kegg_text = kegg_text + '<p><a href="http://www.genome.jp/kegg-bin/show_pathway?' + kegg_info[k]['kegg_id'] + '+' + meta_info["Entrez_Gene_ID"] + '" target="_blank">' + kegg_info[k]['kegg_name'] + '</a></p>';
+					}
+					if(kegg_info.length>2){
+						document.getElementById('rnaseq_kegg').innerHTML = kegg_text;
+						document.getElementById("rnaseq_kegg").style.height = "85px";
+					}
+					else{
+						document.getElementById('rnaseq_kegg').innerHTML = 'NA';
+						document.getElementById("rnaseq_kegg").style.height = "auto";
+					}
+					
+					
+					//////////////////////////////////////////////////////////////////////////////
+					var yScale = d3.scaleBand()
+							.domain(dataset.map(function(d) { return d.short_name; }))
+							.rangeRound([0, height]);
+    				                                
+					var xScale;
+					if(rnaseq_scale_option =='Local'){
+						xScale = d3.scaleLinear().nice()
+    							.domain([0, d3.max(dataset, function(d) { return d.value; })>0.1 ? d3.max(dataset, function(d) { return d.value; })*1.05 : 10]) 
+    							.range([0, width]);
+    					}
+    					else if(rnaseq_scale_option =='Global'){
+						xScale = d3.scaleLinear().nice()
+    							.domain([0, max]) 
+    							.range([0, width]);
+    					}
+    					else if(rnaseq_scale_option =='Local (log10)'){
+						xScale = d3.scaleLog().base(10).nice()
+    							.domain([1, d3.max(dataset, function(d) { return d.value; })>0.1 ? d3.max(dataset, function(d) { return d.value; })*2 : 10]) 
+    							.range([0, width]);
+    					}
+    					else if(rnaseq_scale_option =='Global (log10)'){
+						xScale = d3.scaleLog().base(10).nice()
+    							//.domain([0, d3.max(dataset, function(d) { if(d.type == 'max') return d.value; })*1.05]) 
+    							.domain([1, max*2]) 
+    							.range([0, width]);
+    					}
+    					
+    					chart.append("text")
+    						.attr("x", width/2 + margin.left)             
+    						.attr("y", margin.top/5)
+    						.attr("text-anchor", "middle")
+    						.style("font-size", "15px")
+    						.style("font-weight", "bold")
+    						.style("font-family", "sans-serif")
+    						.text(description1)
+    						.on("mouseover", function(d) {
+    							d3.select(this).style("fill", "blue");
+    							d3.select(this).style("font-size", "16px");
+    							d3.select(this).style("cursor", "hand");
+    						})
+    						.on("mouseout", function(d) {
+    							d3.select(this).style("fill", "black");
+    							d3.select(this).style("font-size", "15px");
+    						})
+    						.on("click", function(){
+    							window.open("https://www.ncbi.nlm.nih.gov/gene/?term=" + rnaseq_gene, '_blank');
+    							window.focus();
+    						})
+    						.append('title')
+    						.text("Click to show gene information");
+    						
+    					chart.append("text")
+    						.attr("x", width/2 + margin.left)             
+    						.attr("y", 3*margin.top/5)
+    						.attr("text-anchor", "middle")
+    						.style("font-size", "13px")
+    						.style("font-family", "sans-serif")
+    						.text(description2);		
+    							
+    					var xAxis;
+    					if((rnaseq_scale_option =='Global (log10)')||(rnaseq_scale_option =='Local (log10)')){
+    						xAxis = d3.axisTop()
+    							.scale(xScale)
+    							.tickSizeInner(-height)
+    							.tickSizeOuter(0)
+    							.tickPadding(5)
+    							.tickFormat(d3.format(",d"))
+    							.tickValues([1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000]);
+    					}
+    					else {
+    						xAxis = d3.axisTop()
+    							.scale(xScale)
+    							.tickSizeInner(-height)
+    							.tickSizeOuter(0)
+    							.tickPadding(5)
+    							.tickFormat(d3.format(",d"))
+    							.ticks(Math.min(10, (xScale.domain()[1] - xScale.domain()[0])));
+    							//.tickValues(d3.range(xScale.domain()[0], xScale.domain()[1]));
+    					}
+    					
+    					var yAxis = d3.axisLeft()                         
+    							.scale(yScale);	
+    					
+    					var bar = chart.selectAll("g")
+    							.data(dataset)  
+    							.enter()
+    							.append("g")
+    							//.filter(function(d){
+    							//	if(rnaseq_scale_option == 'Local') {
+    							//		return d.type == 'data';
+    							//	}
+    							//	else{
+    							//		return d.type != '';
+    							//	}
+    							//})
+    							.attr("transform", function(d, i){
+    								return "translate(0, "+yScale(d.short_name)+")";
+    							});
+    					
+    					bar.append("rect")
+    						.attr("y", function(d,i){
+    							return  margin.top + yScale.bandwidth()/16;
+    						})
+    						.attr("height", yScale.bandwidth()*7/8)
+    						.attr("x", margin.left)
+    						.attr("width", 0)
+    						.style("fill", function(d) { if(pop_group_num>1) { return d.color;} else { return d.color_unique_set;} })
+    						.on("mouseover", function(d) {
+    						
+    							var xPosition = d3.event.pageX+10;  
+    							var yPosition = d3.event.pageY+10;
+    							if((window.innerWidth-xPosition) < 400) xPosition = xPosition - 400;                                                                 
+    							if((window.innerHeight-yPosition) < 150) yPosition = yPosition - 150;
+    							
+    							//if(d.type == 'max'){
+    								//d3.select(this).style("fill", "#C48793");
+    								////d3.select(this).style("cursor", "hand");
+    								////Update the tooltip position and value
+  	             						//d3.select("#tooltip_max")
+  	             						//  .style("left", xPosition + "px")
+  	             						//  .style("top",  yPosition + "px")
+  	             						//  .select("#population_max")
+  	             						//  .text(d.short_name);      
+  	             						//
+  	             						//d3.select("#tooltip_max")
+  	             						//  .style("left", xPosition + "px")
+  	             						//  .style("top", yPosition + "px")
+  	             						//  .select("#expr_value_max")
+  	             						//  .text(d.value);
+  	             						//  
+  	             						//d3.select("#tooltip_max")
+  	             						//  .style("left", xPosition + "px")
+  	             						//  .style("top", yPosition + "px")
+  	             						//  .select("#long_name_max")
+  	             						//  .text(d.long_name);
+  	             						//
+  	             						//d3.select("#tooltip_max")
+  	             						//  .style("left", xPosition + "px")
+  	             						//  .style("top", yPosition + "px")
+  	             						//  .select("#desc_max")
+  	             						//  .text(d.description);
+  	             						//  
+  	             						//d3.select("#tooltip_max")
+  	             						//  .style("left", xPosition + "px")
+  	             						//  .style("top", yPosition + "px")
+  	             						//  .select("#author_max")
+  	             						//  .text(d.author);
+  	             						//  
+  	             						//d3.select("#tooltip_max")
+  	             						//  .style("left", xPosition + "px")
+  	             						//  .style("top", yPosition + "px")
+  	             						//  .select("#number_of_sample_max")
+  	             						//  .text(d.number_of_sample);
+  	             						//  
+  	             						////d3.select("#tooltip")
+  	             						// // .style("left", xPosition + "px")
+  	             						// // .style("top", yPosition + "px")
+  	             						// // .select("#sorting_info")
+  	             						// // .text(d.number_of_sample);
+  	             						//  
+  	             						////Show the tooltip
+  	             						//d3.select("#tooltip_max").classed("hidden", false);
+    							//}
+    							//else{
+    								d3.select(this).style("fill", "#454545");
+    								//d3.select(this).style("cursor", "hand");
+    								//Update the tooltip position and value
+  	             						d3.select("#tooltip")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top",  yPosition + "px")
+  	             						  .select("#population")
+  	             						  .text(d.short_name);      
+  	             						
+  	             						d3.select("#tooltip")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top", yPosition + "px")
+  	             						  .select("#expr_value")
+  	             						  .text(d.value);
+  	             						  
+  	             						d3.select("#tooltip")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top", yPosition + "px")
+  	             						  .select("#long_name")
+  	             						  .text(d.long_name);
+  	             						
+  	             						d3.select("#tooltip")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top", yPosition + "px")
+  	             						  .select("#desc")
+  	             						  .text(d.description);
+  	             						  
+  	             						d3.select("#tooltip")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top", yPosition + "px")
+  	             						  .select("#author")
+  	             						  .text(d.author);
+  	             						  
+  	             						d3.select("#tooltip")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top", yPosition + "px")
+  	             						  .select("#number_of_sample")
+  	             						  .text(d.number_of_sample);
+  	             						  
+  	             						//d3.select("#tooltip")
+  	             						 // .style("left", xPosition + "px")
+  	             						 // .style("top", yPosition + "px")
+  	             						 // .select("#sorting_info")
+  	             						 // .text(d.number_of_sample);
+  	             						  
+  	             						//Show the tooltip
+  	             						d3.select("#tooltip").classed("hidden", false);
+    							//}
+    						})
+    						.on("mouseout", function(d) {
+    							
+    							d3.select(this).style("fill", function(d) { if(pop_group_num>1) { return d.color;} else { return d.color_unique_set;} });
+    							d3.select("#tooltip").classed("hidden", true);  
+    							//d3.select("#tooltip_max").classed("hidden", true);  
+    						})
+    						.transition().delay(function (d,i){ return Math.floor(i/2) * 30;})
+    						.duration(500)
+    						.attr("x", function(d) { 
+    								//if(d.type == 'data') {
+    									return margin.left;
+    								//}
+    								//else if(d.type == 'max') {
+    								//	return margin.left + xScale(d.start);
+    								//}
+    								
+    							} )
+    						.attr("width", function(d) { 
+    							if((rnaseq_scale_option =='Global (log10)')||(rnaseq_scale_option =='Local (log10)')){
+    								if((xScale(d.value) - xScale(1)) > 0) {
+    									return xScale(d.value) - xScale(1); 
+    								}
+    								else {
+    									return 0;
+    								}
+    							}
+    							else {
+    								return xScale(d.value) - xScale(d.start); 
+    							}
+    						});
+    					
+    					var x_axis = chart.append("g")
+    							.attr("class", "x axis")
+    							.attr("transform", "translate(" + margin.left + "," + margin.top + ")")  
+    							//.style("font-family", "sans-serif")
+    							.style("font-size", "10.5px")
+    							//.style("stroke-width", 1)
+    							.call(xAxis);
+    					
+    					var y_axis = chart.append("g")
+    							.attr("class", "y axis")
+    							.attr("transform", function(d,i){
+    								//if(sel == 1){
+    								//	return "translate(" + margin.left + "," +  2*yScale.rangeBand() + ")";
+    								//}
+    								//else{
+    									return  "translate(" + margin.left + "," + margin.top + ")";
+    								//}
+    							})
+    							//"translate(" + margin.left + "," +  2*yScale.rangeBand() + ")")
+    							//.style("font-family", "sans-serif")
+    							.style("font-size", rowlabel_font_size + "px")
+    							//.style({'fill': 'none', 'stroke-width': '1px'})
+    							.call(yAxis);
+    					                                                                                                                   
+    						
+    					//d3.selectAll('.x.axis').style({ 'font-size': '10.5px', 'font-family':'sans-serif'});
+    					//d3.selectAll('.axis').style({ 'font-size': '12.5px', 'font-family':'sans-serif'});
+ 					d3.selectAll('.axis line, .axis path').style({ 'stroke-width': '1px', 'fill':'none', 'stroke': '#000', 'shape-rendering': 'crispEdges'});
+ 					d3.selectAll('.y.axis path').style({'display':'none'});
+ 					d3.selectAll('.tick line').style({'opacity':0.2});
+ 					d3.selectAll('.y.axis .tick').append('title').text("Click to show sorting information");
+ 					
+ 					d3.selectAll('.y.axis .tick')
+ 						.data(dataset)
+ 						.on("mouseover", function(d) {
+ 							var xPosition = d3.event.pageX+10;  
+    							var yPosition = d3.event.pageY+10;
+    							if((window.innerWidth-xPosition) < 400) xPosition = xPosition - 400;                                                                 
+    							if((window.innerHeight-yPosition) < 150) yPosition = yPosition - 150;
+    							
+    								d3.select("#tooltip_y_axis")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top",  yPosition + "px")
+  	             						  .select("#population_y_axis")
+  	             						  .text(d.short_name);      
+  	             						  	             						  
+  	             						d3.select("#tooltip_y_axis")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top", yPosition + "px")
+  	             						  .select("#long_name_y_axis")
+  	             						  .text(d.long_name);
+  	             						
+  	             						d3.select("#tooltip_y_axis")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top", yPosition + "px")
+  	             						  .select("#desc_y_axis")
+  	             						  .text(d.description);
+  	             						  
+  	             						d3.select("#tooltip_y_axis")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top", yPosition + "px")
+  	             						  .select("#author_y_axis")
+  	             						  .text(d.author);
+  	             						  
+  	             						d3.select("#tooltip_y_axis")
+  	             						  .style("left", xPosition + "px")
+  	             						  .style("top", yPosition + "px")
+  	             						  .select("#number_of_sample_y_axis")
+  	             						  .text(d.number_of_sample);
+  	             						
+  	             						d3.select("#tooltip_y_axis").classed("hidden", false);
+  	             						
+  	             						
+    							d3.select(this).style("fill", "red");
+    							d3.select(this).style("font-size", (rowlabel_font_size+1) + "px");
+    							d3.select(this).style("font-weight", "bold");
+    							d3.select(this).style("cursor", "hand");
+    						})
+    						.on("mouseout", function(d) {
+    						
+    							d3.select("#tooltip_y_axis").classed("hidden", true);  
+    							
+    							//d3.select(this).style("stroke", "black");
+    							d3.select(this).style("font-size", rowlabel_font_size + "px");
+    							d3.select(this).style("font-weight", "normal");
+    						})
+    						.on("click", function(d) {
+    							if(d.sorting_info=='1'){
+    								window.open("resources/Sorting_PDFs_ATAC/" + d.population + '.pdf', '_blank');
+    								window.focus();
+    							}
+    							else{
+    								$("#AlertModal").modal('show');
+    								//alert("Sorry! The sorting information is NOT available.");
+    							}
+    						});
+					
+				}
+			});
+			
+			////////////////////////////////////////////////////////////////
+			
+			$('#microarray_pill').on('click', function (e) {
+				chart.selectAll("*").remove();
+				document.getElementById('rnaseq_save_option').style.display="none";
+			});
+			
+			$('#rnaseq_pill').on('click', function (e) {
+				chart.selectAll("*").remove();
+				document.getElementById('microarray_save_option').style.display="none";
+			});
+    			
+			////////////////////////////////////////////////////////////////
+			$("#microarray_save_expr").click(function() { 
+				var microarray_datagroup = $("#microarray_datagroup_list").val();
+				var microarray_gene = $("#microarray_Gene").val();
+    				var microarray_probeset_id = hashtable[microarray_gene];
+    				
+				window.open( 'http://rstats.immgen.org/Skyline/download_expr_table.php?type=microarray&id=' + microarray_probeset_id + '&datagroup=' + microarray_datagroup + '&population=&key_population=' );
+			});
+			$("#microarray_save_as_svg").click(function() { submit_download_form("svg"); });
+			$("#microarray_save_as_pdf").click(function() { submit_download_form("pdf"); });
+			$("#microarray_print").click(function() { print_div(); });
+			
+			$("#rnaseq_save_expr").click(function() { 
+				var rnaseq_datagroup = $("#rnaseq_datagroup_list").val();
+    				var rnaseq_gene = $("#rnaseq_Gene").val();
+				var rnaseq_population_option = $("#rnaseq_population_list").val();
+				var rnaseq_population = $("#rnaseq_group").text();
+					
+				window.open( 'http://rstats.immgen.org/Skyline/download_expr_table.php?type=rnaseq&id=' + rnaseq_gene + '&datagroup=' + rnaseq_datagroup + '&population=' + rnaseq_population + '&key_population=' + rnaseq_population_option );
+			});
+			$("#rnaseq_save_as_svg").click(function() { submit_download_form("svg"); });
+			$("#rnaseq_save_as_pdf").click(function() { submit_download_form("pdf"); });
+			$("#rnaseq_print").click(function() { print_div(); });
+    		});
+    		
+    		
+		////////////////////////////////////////////////////////////////
+		
+      		function submit_download_form(output_format)
+      		{
+			// Get the d3js SVG element
+			var tmp = document.getElementById("chart");
+			var svg = tmp.getElementsByTagName("svg")[0];
+			// Extract the data as SVG text string
+			var svg_xml = (new XMLSerializer).serializeToString(svg);
+                	
+			// Submit the <FORM> to the server.
+			// The result will be an attachment file to download.
+			var form = document.getElementById("svgform");
+			form['output_format'].value = output_format;
+			form['data'].value = svg_xml ;
+			form.submit();
+		}
+		
+		
+		function print_div() {
+			var printContents = document.getElementById("chart").innerHTML;
+			var originalContents = document.body.innerHTML;
+			
+			document.body.innerHTML = printContents;
+			window.location.reload();
+			window.print();
+			
+			
+		}
+		
+		function refresh_rnaseq_genelist() {
+			if(document.getElementById("rnaseq_beginwith").checked){
+				genes_gencode_GRCm38 = new Bloodhound({
+					datumTokenizer: Bloodhound.tokenizers.whitespace,
+					queryTokenizer: Bloodhound.tokenizers.whitespace,
+					local: gene_info_gencode_GRCm38
+				});
+				$('#rnaseq_GeneList .typeahead').typeahead('destroy');
+				$('#rnaseq_GeneList .typeahead').typeahead({
+				  hint: true,
+				  highlight: true,
+				  minLength: 1
+				},
+				{
+				  name: 'genes',
+				  limit: 100,
+				  source: genes_gencode_GRCm38
+				});
+			}
+			else if(document.getElementById("rnaseq_contain").checked){
+				genes_gencode_GRCm38 = new Bloodhound({
+					datumTokenizer: function(d) {
+						var tokens = [];
+						//the available string is 'name' in your datum
+						var stringSize = d.length;
+						//multiple combinations for every available size
+						//(eg. dog = d, o, g, do, og, dog)
+						for (var size = 1; size <= stringSize; size++){          
+							for (var i = 0; i+size<= stringSize; i++){
+								tokens.push(d.substr(i, size));
+							}
+						}
+                	        	
+						return tokens;
+					},
+					queryTokenizer: Bloodhound.tokenizers.whitespace,
+					local: gene_info_gencode_GRCm38
+				});
+				$('#rnaseq_GeneList .typeahead').typeahead('destroy');
+				$('#rnaseq_GeneList .typeahead').typeahead({
+				  hint: true,
+				  highlight: true,
+				  minLength: 1
+				},
+				{
+				  name: 'genes',
+				  limit: 100,
+				  source: genes_gencode_GRCm38
+				});
+			}
+		}
+		
+		$(document).ready(function() {
+			//$("#microarray_save_as_svg").click(function() { submit_download_form("svg"); });
+			//$("#microarray_save_as_pdf").click(function() { submit_download_form("pdf"); });
+			//$("#microarray_print").click(function() { print_div(1); });
+			//$("#save_as_png1").click(function() { submit_download_form("png"); });
+			
+		});		
+	
+	</script>
+  
+</body>
+</html>
